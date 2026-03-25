@@ -1,0 +1,204 @@
+---
+// src/components/StackCards.astro
+
+import directionImg from '../assets/Direction_creative.png';
+import devImg from '../assets/Developpement_front.png';
+import experienceImg from '../assets/Experience_utilisateur.png';
+
+const cards = [
+  {
+    bg: '#f5f5f0',
+    color: '#ff1f6e',
+    number: '01',
+    tag: 'Création visuelle, identité graphique, posters, interfaces',
+    title: 'DIRECTION\nCRÉATIVE',
+    img: directionImg.src,
+  },
+  {
+    bg: '#b8f000',
+    color: '#000',
+    number: '02',
+    tag: 'Intégration web, animations, interactions, responsive',
+    title: 'DÉVELOPPEMENT\nFRONT',
+    img: devImg.src,
+  },
+  {
+    bg: '#ff1f6e',
+    color: '#b8f000',
+    number: '03',
+    tag: 'UX/UI, ergonomie, parcours, accessibilité, expérience',
+    title: 'EXPÉRIENCE\nUTILISATEUR',
+    img: experienceImg.src,
+  },
+];
+---
+
+<!-- Wrapper qui donne la hauteur de scroll nécessaire -->
+<div class="stack-scroll-wrapper">
+
+  <!-- Zone sticky qui reste à l'écran pendant le scroll -->
+  <div class="stack-sticky">
+    {cards.map((card, i) => (
+      <div
+        class="stack-card"
+        data-index={i}
+        style={`background: ${card.bg}; color: ${card.color}; z-index: ${10 + i};`}
+      >
+        <div class="card-inner">
+          <!-- Tag en haut à gauche -->
+          <p class="card-tag" style={`color: ${card.color};`}>{card.tag}</p>
+
+          <!-- Titre en bas à gauche -->
+          <h2 class="card-title" style={`color: ${card.color};`}>
+            {card.title.split('\n').map((line) => (
+              <span class="title-line">{line}<br /></span>
+            ))}
+          </h2>
+
+          <!-- Image en haut à droite -->
+          <div class="card-image-wrap">
+            <img src={card.img} alt={card.title} class="card-image" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+</div>
+
+<style>
+  /* La hauteur totale = nb de cartes × 100vh pour avoir assez de scroll */
+  .stack-scroll-wrapper {
+    position: relative;
+    height: 400vh; /* 3 cartes × ~130vh de scroll chacune */
+  }
+
+  .stack-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Chaque carte = plein écran, empilées, la 1ère visible par défaut */
+  .stack-card {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateY(100%);
+    will-change: transform;
+  }
+
+  /* La première carte est visible d'entrée */
+  .stack-card[data-index="0"] {
+    transform: translateY(0%);
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .card-tag {
+    position: absolute;
+    top: 4.5rem;
+    left: 4.5rem;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    line-height: 1.5;
+    max-width: 380px;
+    opacity: 0.85;
+  }
+
+  .card-title {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .card-image-wrap {
+    position: absolute;
+    top: 4.5rem;
+    right: 4.5rem;
+    width: clamp(220px, 30vw, 420px);
+    height: clamp(320px, 52vw, 620px);
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 600px) {
+    .card-inner { padding: 2rem; }
+    .card-tag { top: 2rem; left: 2rem; font-size: 0.75rem; }
+    .card-image-wrap { top: 2rem; right: 2rem; }
+  }
+</style>
+
+<script>
+  const wrapper = document.querySelector('.stack-scroll-wrapper') as HTMLElement;
+  const cards = document.querySelectorAll<HTMLElement>('.stack-card');
+  const CARD_COUNT = cards.length;
+
+  let ticking = false;
+
+  function update() {
+    const rect = wrapper.getBoundingClientRect();
+    const wrapperTop = -rect.top; // pixels scrollés dans le wrapper
+    const wrapperHeight = wrapper.offsetHeight - window.innerHeight;
+
+    // Progression globale 0→1 sur toute la section
+    const progress = Math.min(Math.max(wrapperTop / wrapperHeight, 0), 1);
+
+    // Chaque carte occupe 1/CARD_COUNT de la progression
+    const segment = 1 / CARD_COUNT;
+
+    cards.forEach((card, i) => {
+      // Progression locale de cette carte (0→1)
+      const cardStart = i * segment;
+      const cardProgress = Math.min(Math.max((progress - cardStart) / segment, 0), 1);
+
+      if (i === 0) {
+        // Première carte : toujours visible, ne bouge pas
+        card.style.transform = 'translateY(0%)';
+      } else {
+        // Les cartes suivantes arrivent du bas
+        // 0 → encore cachée en bas (100%)
+        // 1 → pleinement posée (0%)
+        const eased = easeOutQuart(cardProgress);
+        const translateY = 100 - eased * 100;
+        card.style.transform = `translateY(${translateY}%)`;
+      }
+    });
+
+    ticking = false;
+  }
+
+  function easeOutQuart(x: number): number {
+    return 1 - Math.pow(1 - x, 4);
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  });
+
+  update();
+</script>

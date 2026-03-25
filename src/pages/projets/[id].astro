@@ -1,0 +1,649 @@
+---
+// src/pages/projets/[id].astro
+import Layout from '../../layouts/Layout.astro';
+
+const { id } = Astro.params;
+
+let projet = null;
+let error = false;
+
+try {
+  const res = await fetch(`http://127.0.0.1:8090/api/collections/detail_projet/records/${id}`);
+  if (!res.ok) throw new Error('Not found');
+  projet = await res.json();
+} catch (e) {
+  error = true;
+}
+
+if (error || !projet) {
+  return Astro.redirect('/404');
+}
+
+// Construction des URLs des images de la galerie
+const PB_URL = 'http://127.0.0.1:8090';
+const galerieUrls: string[] = projet.galerie_detail
+  ? projet.galerie_detail.map((filename: string) =>
+      `${PB_URL}/api/files/${projet.collectionId}/${projet.id}/${filename}`
+    )
+  : [];
+
+// Compétences (select multiple = tableau)
+const competences: string[] = Array.isArray(projet.competence_detail)
+  ? projet.competence_detail
+  : projet.competence_detail
+    ? projet.competence_detail.split(',').map((c: string) => c.trim())
+    : [];
+---
+
+<Layout title={`${projet.nom_detail} — Lison Pruvost`}>
+
+  <!-- Curseur -->
+  <div class="custom-cursor" id="cursor"></div>
+  <div class="custom-cursor-dot" id="cursor-dot"></div>
+
+  <!-- ══════════════════════════════════
+       HERO
+  ══════════════════════════════════ -->
+  <section class="projet-hero">
+    <a href="/projets" class="btn-retour">← Projets</a>
+    <div class="projet-hero-inner">
+
+      <!-- Colonne gauche : infos -->
+      <div class="projet-hero-left">
+        <h1 class="projet-title reveal">
+          <span class="script-letter">{projet.nom_detail.charAt(0)}</span><span class="title-rest">{projet.nom_detail.slice(1)}</span>
+        </h1>
+
+        <p class="projet-extrait reveal">{projet.extrait_detail}</p>
+
+        <!-- Tags compétences -->
+        <div class="competences-wrap reveal">
+          {competences.map((comp: string) => (
+            <span class="competence-tag">{comp}</span>
+          ))}
+        </div>
+
+        <hr class="projet-divider" />
+
+        <!-- Description -->
+        <p class="projet-explication reveal">{projet.explication_detail}</p>
+
+        {projet.voir_site_detail && (
+          <a href={projet.voir_site_detail} target="_blank" rel="noopener" class="btn-voir-site reveal">
+            Voir le projet →
+          </a>
+        )}
+      </div>
+
+      <div class="projet-hero-right">
+        <div class="galerie-grid">
+          {galerieUrls.map((url: string, i: number) => (
+            <div class={`galerie-item ${i === 0 || i >= galerieUrls.length - 2 ? 'galerie-item-full' : ''} reveal`} style={`transition-delay: ${i * 0.08}s`}>
+              <img src={url} alt={`${projet.nom_detail} — image ${i + 1}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════
+       OBJECTIFS — fond blanc
+  ══════════════════════════════════ -->
+  {projet.objectif_detail && (
+    <section class="projet-objectifs">
+      <div class="objectifs-inner">
+        <h2 class="objectifs-title reveal">Objectifs du projet</h2>
+        <div class="objectifs-content reveal">
+          {projet.objectif_detail.split('\n').filter((l: string) => l.trim()).map((line: string) => (
+            <div class="objectif-line">
+              <span class="objectif-bullet">—</span>
+              <p>{line.replace(/^[-•]\s*/, '')}</p>
+            </div>
+          ))}
+        </div>
+
+        {projet.resultat_detail && (
+          <div class="resultat-wrap reveal">
+            <h2 class="objectifs-title" style="margin-top: 3rem;">Résultat</h2>
+            <p class="resultat-text">{projet.resultat_detail}</p>
+          </div>
+        )}
+
+        {projet.rapport_ia && (
+  <div class="resultat-wrap reveal">
+    <h2 class="objectifs-title" style="margin-top: 3rem;">Rapport IA</h2>
+    <p class="resultat-text">{projet.rapport_ia}</p>
+  </div>
+)}
+      </div>
+    </section>
+  )}
+
+  
+
+  <!-- ══════════════════════════════════
+       VOIR D'AUTRES PROJETS — fond blanc
+  ══════════════════════════════════ -->
+  <section class="autres-projets">
+    <div class="autres-inner">
+      <h2 class="autres-title reveal">
+        <span class="script-v">V</span>oir d'autres projets
+      </h2>
+      <div class="autres-grid" id="autres-grid">
+        <!-- Chargé dynamiquement en JS -->
+        <div class="autres-placeholder">Chargement...</div>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style is:global>
+  .custom-cursor {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--color-green, #b8f000);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .custom-cursor-dot {
+    width: 5px; height: 5px;
+    background: var(--color-green, #b8f000);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 10000;
+    transform: translate(-50%, -50%);
+  }
+  .custom-cursor.hovering { width: 56px; height: 56px; background: rgba(184,240,0,0.08); }
+</style>
+
+<style is:global>
+  * { cursor: none; }
+
+  /* ── HERO ── */
+  .projet-hero {
+    background: #f5f5f0;
+    min-height: 100vh;
+    padding: 5rem 5rem 5rem;
+    position: relative;
+  }
+
+  .btn-retour {
+    position: absolute;
+    top: 1.8rem;
+    left: 5rem;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+  }
+
+  .btn-retour:hover {
+    opacity: 1;
+  }
+
+  .projet-hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 5rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* Colonne gauche sticky pendant le scroll de la galerie */
+  .projet-hero-left {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+  }
+
+  /* Titre */
+  .projet-title {
+    font-weight: normal;
+    line-height: 1;
+    margin: 0 0 1.5rem;
+    color: #000;
+  }
+  .script-letter {
+    font-family: 'Edwardian Script', cursive;
+    font-size: clamp(5rem, 10vw, 9rem);
+    font-weight: normal;
+    color: #000;
+  }
+  .title-rest {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+
+  .projet-extrait {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+    max-width: 480px;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Tags */
+  .competences-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .competence-tag {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #000;
+    border: 1.5px solid #000;
+    border-radius: 50px;
+    padding: 0.3rem 1rem;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, color 0.2s;
+  }
+  .competence-tag:hover {
+    background: #000;
+    color: var(--color-green, #b8f000);
+  }
+
+  .projet-divider {
+    border: none;
+    border-top: 1px solid rgba(0,0,0,0.12);
+    margin: 2rem 0;
+  }
+
+  .projet-explication {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.85;
+    color: #444;
+    margin-bottom: 2rem;
+    text-align: justify;
+  }
+
+  .btn-voir-site {
+    display: inline-block;
+    padding: 0.7rem 2rem;
+    background: #000;
+    color: var(--color-green, #b8f000);
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-voir-site:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  /* Galerie */
+  .galerie-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+
+  .galerie-item {
+    overflow: hidden;
+    border-radius: 3px;
+    background: #e8e8e4;
+    height: clamp(140px, 18vw, 240px);
+  }
+
+  /* Pleine largeur : première image + 2 dernières */
+  .galerie-item-full {
+    grid-column: 1 / -1;
+    height: clamp(200px, 28vw, 380px);
+  }
+
+  .galerie-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .galerie-item:hover img {
+    transform: scale(1.04);
+  }
+
+  /* ── OBJECTIFS ── */
+  .projet-objectifs {
+    background: #fff;
+    padding: 6rem 5rem;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .objectifs-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .objectifs-title {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 2rem;
+  }
+
+  .objectif-line {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .objectif-bullet {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-green, #b8f000);
+    filter: brightness(0.7);
+    flex-shrink: 0;
+  }
+
+  .objectif-line p {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.95rem;
+    color: #222;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .resultat-text {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: #333;
+    margin: 0;
+    text-align: justify;
+  }
+
+  /* ── AUTRES PROJETS ── */
+  .autres-projets {
+    background: #fff;
+    padding: 4rem 5rem 7rem;
+  }
+
+  .autres-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .autres-title {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    color: #000;
+    margin-bottom: 3rem;
+    line-height: 1;
+  }
+
+  .script-v {
+    font-family: 'Edwardian Script', cursive;
+    font-size: 1.25em;
+    font-weight: normal;
+  }
+
+  .autres-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .autres-placeholder {
+    color: #999;
+    font-size: 0.85rem;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .autre-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #e8e8e4;
+    aspect-ratio: 4/3;
+    text-decoration: none;
+    display: block;
+  }
+
+  .autre-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .autre-card:hover img { transform: scale(1.04); }
+
+  .autre-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .autre-card:hover .autre-card-overlay { opacity: 1; }
+
+  .autre-card-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .autre-card:hover .autre-card-label { opacity: 1; }
+
+  .autre-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .autre-card-name {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.4;
+    max-width: 60%;
+  }
+
+  .autre-card-btn {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.7);
+    border-radius: 50px;
+    padding: 0.35rem 1rem;
+    white-space: nowrap;
+  }
+
+  .autre-card-comps {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .autre-card-comp {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .projet-hero { padding: 5rem 2rem 4rem; }
+    .projet-hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .galerie-grid { grid-template-columns: 1fr; }
+    .galerie-item-0 { grid-column: 1; }
+    .projet-objectifs, .autres-projets { padding: 4rem 2rem; }
+    .autres-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .autres-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script define:vars={{ currentId: id, PB_URL: 'http://127.0.0.1:8090' }}>
+  // ── Curseur ──
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursor-dot');
+  let cx = 0, cy = 0, tx = 0, ty = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    tx = e.clientX; ty = e.clientY;
+    dot.style.left = tx + 'px';
+    dot.style.top = ty + 'px';
+  });
+
+  (function animCursor() {
+    cx += (tx - cx) * 0.12;
+    cy += (ty - cy) * 0.12;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    requestAnimationFrame(animCursor);
+  })();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+
+  // ── Reveal scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Autres projets ──
+  // 1. On trouve le projet courant dans la collection "projet" via lien_projet = currentId
+  // 2. On récupère ses projets_similaire (IDs de la collection projet)
+  // 3. On charge chaque projet similaire et on affiche la carte
+  async function loadAutresProjets() {
+    const grid = document.getElementById('autres-grid');
+    if (!grid) return;
+
+    try {
+      // Étape 1 : trouver le projet courant dans la collection "projet"
+      const resProjet = await fetch(
+        `${PB_URL}/api/collections/projet/records?filter=(lien_projet='${currentId}')&perPage=1`
+      );
+      const dataProjet = await resProjet.json();
+      const projetCourant = dataProjet.items?.[0];
+
+      if (!projetCourant || !projetCourant.projets_similaire?.length) {
+        grid.innerHTML = '<p style="color:#999;font-size:0.85rem;font-family:Helvetica,sans-serif;">Aucun projet similaire.</p>';
+        return;
+      }
+
+      // Étape 2 : charger chaque projet similaire
+      const similaires = await Promise.all(
+        projetCourant.projets_similaire.slice(0, 3).map((simId) =>
+          fetch(`${PB_URL}/api/collections/projet/records/${simId}`)
+            .then(r => r.json())
+            .catch(() => null)
+        )
+      );
+
+      const projetsValides = similaires.filter(Boolean);
+
+      if (projetsValides.length === 0) {
+        grid.innerHTML = '<p style="color:#999;font-size:0.85rem;font-family:Helvetica,sans-serif;">Aucun projet similaire.</p>';
+        return;
+      }
+
+      // Étape 3 : construire les cartes
+      grid.innerHTML = projetsValides.map(p => {
+        const thumb = p.photo_projet
+          ? `${PB_URL}/api/files/${p.collectionId}/${p.id}/${p.photo_projet}`
+          : '';
+
+        const comps = Array.isArray(p.competence_projet)
+          ? p.competence_projet
+          : (p.competence_projet || '').split(',').map(c => c.trim()).filter(Boolean);
+
+        // Le lien vers la page détail via lien_projet
+        const href = p.lien_projet ? `/projets/${p.lien_projet}` : '#';
+
+        return `
+          <a href="${href}" class="autre-card reveal">
+            ${thumb
+              ? `<img src="${thumb}" alt="${p.nom_projet}" loading="lazy" />`
+              : '<div style="width:100%;height:100%;background:#ddd"></div>'
+            }
+            <div class="autre-card-overlay"></div>
+            <div class="autre-card-label">
+              <div class="autre-card-top">
+                <span class="autre-card-name">${p.nom_projet}</span>
+                <span class="autre-card-btn">Voir plus</span>
+              </div>
+              <div class="autre-card-comps">
+                ${comps.map(c => `<span class="autre-card-comp">${c}</span>`).join('')}
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      // Observer les nouvelles cartes pour le reveal
+      grid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    } catch (err) {
+      console.error('Erreur chargement autres projets:', err);
+      grid.innerHTML = '<p style="color:#999;font-size:0.85rem;font-family:Helvetica,sans-serif;">Erreur de chargement.</p>';
+    }
+  }
+
+  loadAutresProjets();
+</script>

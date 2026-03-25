@@ -1,0 +1,231 @@
+---
+// src/components/IndexProjet.astro
+
+import oceanImg from '../assets/Ocean_hover.png';
+import yumlyImg from '../assets/yumly_hover.png';
+import moduloImg from '../assets/modulo_hover.png';
+import photoImg from '../assets/photographie_hover.png';
+
+const projects = [
+  { number: "01", label: "Design graphique",  href: "/projets?filtre=Design%20graphique",       img: oceanImg.src },
+  { number: "02", label: "Développement web", href: "/projets?filtre=D%C3%A9veloppement%20web", img: yumlyImg.src },
+  { number: "03", label: "Motion design",     href: "/projets?filtre=Motion%20design",           img: moduloImg.src },
+  { number: "04", label: "Audiovisuel",       href: "/projets?filtre=Photographie",              img: photoImg.src },
+];
+---
+
+<section class="index-projet">
+
+  <div class="index-projet-title">
+    <h2>
+      <span class="title-script">M</span><span class="title-script-rest">es </span><span class="title-capital">P</span><span class="title-sans">rojets</span>
+    </h2>
+  </div>
+
+  <div class="project-list">
+    {projects.map((p) => (
+      <a href={p.href} class="project-item" data-img={p.img}>
+        <span class="project-number">[{p.number}]</span>
+        <span class="project-label">{p.label}</span>
+        <span class="project-arrow">→</span>
+      </a>
+    ))}
+  </div>
+
+  <div class="hover-image-container" id="hover-image">
+    <img src="" alt="" id="hover-img-el" />
+  </div>
+
+</section>
+
+<style>
+  .index-projet {
+    background: #000;
+    padding: 6rem 2rem 8rem;
+    position: relative;
+  }
+
+  .index-projet-title {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .index-projet-title h2 {
+    line-height: 1.1;
+    color: var(--color-green);
+    font-weight: normal;
+    display: inline-block;
+  }
+
+  .title-script,
+  .title-script-rest,
+  .title-capital {
+    font-family: 'Edwardian Script', cursive;
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: normal;
+  }
+
+  .title-sans {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    font-weight: bold;
+  }
+
+  .project-list {
+    max-width: 900px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .project-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  .project-item:hover {
+    color: var(--color-green);
+  }
+
+  .project-number {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.35);
+    min-width: 2.5rem;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+  }
+
+  .project-item:hover .project-number {
+    color: rgba(155, 255, 0, 0.5);
+  }
+
+  .project-label {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: clamp(1.8rem, 4.5vw, 4.5rem);
+    font-weight: bold;
+    line-height: 1;
+    flex: 1;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .project-item:hover .project-label {
+    transform: translateX(12px);
+  }
+
+  .project-arrow {
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    flex-shrink: 0;
+    color: var(--color-green);
+    transform: translateX(-10px);
+  }
+
+  .project-item:hover .project-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* L'image — aucun transform ici, tout est géré en JS */
+  .hover-image-container {
+    position: fixed;
+    width: 280px;
+    height: 190px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    /* transition uniquement sur opacity */
+    transition: opacity 0.2s ease;
+    top: 0;
+    left: 0;
+  }
+
+  .hover-image-container.visible {
+    opacity: 1;
+  }
+
+  .hover-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .hover-image-container { display: none; }
+    .project-label {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+    }
+  }
+</style>
+
+<script>
+  const items = document.querySelectorAll<HTMLElement>('.project-item');
+  const hoverContainer = document.getElementById('hover-image') as HTMLElement;
+  const hoverImg = document.getElementById('hover-img-el') as HTMLImageElement;
+
+  const W = 280;
+  const H = 190;
+
+  let mouseX = 0;
+  let mouseY = 0;
+  let curX = 0;
+  let curY = 0;
+  let isVisible = false;
+
+  function lerp(a: number, b: number, t: number) {
+    return a + (b - a) * t;
+  }
+
+  function tick() {
+    if (isVisible) {
+      curX = lerp(curX, mouseX, 0.12);
+      curY = lerp(curY, mouseY, 0.12);
+      // On centre l'image sur le curseur et on la décale légèrement en haut à droite
+      hoverContainer.style.transform = `translate(${curX - W / 2 + 40}px, ${curY - H / 2 - 30}px)`;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  tick();
+
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  items.forEach((item) => {
+    const imgSrc = item.dataset.img || '';
+
+    item.addEventListener('mouseenter', () => {
+      if (!imgSrc) return;
+      hoverImg.src = imgSrc;
+      // Téléporte immédiatement à la position courante avant d'afficher
+      curX = mouseX;
+      curY = mouseY;
+      hoverContainer.style.transform = `translate(${curX - W / 2 + 40}px, ${curY - H / 2 - 30}px)`;
+      isVisible = true;
+      hoverContainer.classList.add('visible');
+    });
+
+    item.addEventListener('mouseleave', () => {
+      isVisible = false;
+      hoverContainer.classList.remove('visible');
+    });
+  });
+</script>

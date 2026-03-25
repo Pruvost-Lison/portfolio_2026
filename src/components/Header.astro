@@ -1,0 +1,241 @@
+---
+// src/components/Header.astro
+import logo from '../assets/logo_jellis.svg';
+import cvFile from '../assets/CV_Lison_Pruvost.pdf';
+---
+
+<header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="header-inner container-custom flex items-center justify-between py-4">
+    
+    <!-- Logo -->
+    <a href="/" class="logo-link flex items-center group" aria-label="Jellis - Accueil">
+      <img 
+        src={logo.src} 
+        alt="Jellis" 
+        class="h-8 w-auto transition-all duration-300 group-hover:opacity-80"
+      />
+    </a>
+
+    <!-- Navigation desktop -->
+    <nav class="hidden md:flex items-center gap-8" aria-label="Navigation principale">
+      <a href="/projets" class="nav-link">Projets</a>
+      <a href={cvFile} target="_blank" rel="noopener noreferrer" class="nav-link nav-link-highlight">
+  Télécharger CV
+</a>
+      <a href="/a-propos" class="nav-link">À propos</a>
+      <a href="/contact" class="nav-cta">Contact</a>
+    </nav>
+
+    <!-- Burger menu mobile -->
+    <button 
+      id="burger-btn"
+      class="md:hidden flex flex-col gap-1.5 p-2 group"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+    >
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+      <span class="burger-line burger-line-short"></span>
+    </button>
+  </div>
+
+  <!-- Menu mobile -->
+  <div id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+    <nav class="container-custom py-6 flex flex-col gap-4">
+      <a href="/projets" class="mobile-nav-link">Projets</a>
+      <a href="/mes-styles" class="mobile-nav-link">Mes styles</a>
+      <div class="divider-green my-1"></div>
+      <a href={cvFile} target="_blank" rel="noopener noreferrer" class="mobile-nav-link mobile-nav-link-highlight">
+  Télécharger CV
+</a>
+      <a href="/a-propos" class="mobile-nav-link">À propos</a>
+      <a href="/contact" class="mobile-nav-link mobile-nav-link-cta">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Spacer pour éviter que le contenu passe sous le header -->
+<div class="header-spacer" style="height: 72px;"></div>
+
+<style>
+  #main-header {
+    background-color: var(--color-black);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+
+  #main-header.scrolled {
+    border-bottom-color: var(--color-green);
+    background-color: rgba(19, 19, 19, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Nav links */
+  .nav-link {
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-green);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-green);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover {
+    opacity: 0.7;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  /* CV link en rose */
+  .nav-link-highlight {
+    color: var(--color-pink);
+  }
+
+  .nav-link-highlight::after {
+    background-color: var(--color-pink);
+  }
+
+  .nav-link-highlight:hover {
+    opacity: 0.8;
+  }
+
+  /* Bouton Contact */
+  .nav-cta {
+    font-family: var(--font-family-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-green);
+    background-color: var(--color-black);
+    text-decoration: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    border: 2px solid var(--color-green);
+    box-shadow: 0 0 10px rgba(155, 255, 0, 0.25);
+    transition: box-shadow 0.2s, background-color 0.2s;
+  }
+
+  .nav-cta:hover {
+    background-color: rgba(155, 255, 0, 0.08);
+    box-shadow: 0 0 20px rgba(155, 255, 0, 0.5);
+  }
+
+  /* Burger */
+  .burger-line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--color-green);
+    transition: transform 0.3s, opacity 0.3s, width 0.3s;
+    transform-origin: center;
+  }
+
+  .burger-line-short {
+    width: 16px;
+    align-self: flex-end;
+  }
+
+  #burger-btn[aria-expanded="true"] .burger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  #burger-btn[aria-expanded="true"] .burger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  #burger-btn[aria-expanded="true"] .burger-line:nth-child(3) {
+    width: 24px;
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    border-top: 1px solid transparent;
+  }
+
+  .mobile-menu.open {
+    max-height: 400px;
+    border-top-color: rgba(155, 255, 0, 0.2);
+  }
+
+  .mobile-nav-link {
+    font-family: var(--font-family-sans);
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--color-green);
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: opacity 0.2s, padding-left 0.2s;
+    display: block;
+  }
+
+  .mobile-nav-link:hover {
+    opacity: 0.7;
+    padding-left: 0.5rem;
+  }
+
+  .mobile-nav-link-highlight {
+    color: var(--color-pink);
+  }
+
+  .mobile-nav-link-highlight:hover {
+    color: var(--color-pink);
+    opacity: 0.8;
+  }
+
+  .mobile-nav-link-cta {
+    color: var(--color-green);
+    font-weight: 700;
+  }
+</style>
+
+<script>
+  const header = document.getElementById('main-header');
+  const burgerBtn = document.getElementById('burger-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  // Scroll effect
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+      header?.classList.add('scrolled');
+    } else {
+      header?.classList.remove('scrolled');
+    }
+  });
+
+  // Mobile menu toggle
+  burgerBtn?.addEventListener('click', () => {
+    const isOpen = burgerBtn.getAttribute('aria-expanded') === 'true';
+    burgerBtn.setAttribute('aria-expanded', String(!isOpen));
+    mobileMenu?.setAttribute('aria-hidden', String(isOpen));
+    mobileMenu?.classList.toggle('open', !isOpen);
+  });
+
+  // Fermer le menu mobile en cliquant sur un lien
+  mobileMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      burgerBtn?.setAttribute('aria-expanded', 'false');
+      mobileMenu?.setAttribute('aria-hidden', 'true');
+      mobileMenu?.classList.remove('open');
+    });
+  });
+</script>

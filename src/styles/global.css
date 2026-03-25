@@ -1,0 +1,521 @@
+/* === FONTS CUSTOM === */
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/fonts/Helvetica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/fonts/Helvetica-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Edwardian Script';
+  src: url('/fonts/Edwardian.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@import "tailwindcss";
+
+@theme {
+  /* === COULEURS === */
+  --color-white-pure: #ffffff;
+  --color-black: #131313;
+  --color-green: #9bff00;
+  --color-pink: #fb0373;
+  --color-white-violet: #f8f6fb;
+  
+  /* === FONTS === */
+  --font-family-sans: Helvetica, Arial, sans-serif;
+  --font-family-script: "Edwardian Script", cursive;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+}
+
+/* === STYLES DE BASE === */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-black);
+  color: var(--color-white-pure);
+  font-family: var(--font-family-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-sans);
+  font-weight: bold;
+}
+
+/* === COMPOSANTS === */
+@layer components {
+  /* === BOUTONS === */
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-block;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-green);
+    color: var(--color-black);
+  }
+  
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+  
+  .btn-secondary {
+    background-color: var(--color-pink);
+    color: var(--color-white-pure);
+  }
+  
+  .btn-secondary:hover {
+    opacity: 0.9;
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    color: var(--color-green);
+    border: 2px solid var(--color-green);
+  }
+  
+  .btn-outline:hover {
+    background-color: var(--color-green);
+    color: var(--color-black);
+  }
+  
+  .btn-outline-pink {
+    background-color: transparent;
+    color: var(--color-pink);
+    border: 2px solid var(--color-pink);
+  }
+  
+  .btn-outline-pink:hover {
+    background-color: var(--color-pink);
+    color: var(--color-white-pure);
+  }
+  
+  /* === CARDS === */
+  .card {
+    background-color: var(--color-white-violet);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-dark {
+    background-color: var(--color-black);
+    color: var(--color-white-pure);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-green {
+    background-color: var(--color-green);
+    color: var(--color-black);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-pink {
+    background-color: var(--color-pink);
+    color: var(--color-white-pure);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* === SECTIONS === */
+  .section {
+    padding: 4rem 1rem;
+  }
+  
+  .section-dark {
+    padding: 4rem 1rem;
+    background-color: var(--color-black);
+    color: var(--color-white-pure);
+  }
+  
+  .section-light {
+    padding: 4rem 1rem;
+    background-color: var(--color-white-violet);
+  }
+  
+  .section-white {
+    padding: 4rem 1rem;
+    background-color: var(--color-white-pure);
+  }
+  
+  .section-green {
+    padding: 4rem 1rem;
+    background-color: var(--color-green);
+    color: var(--color-black);
+  }
+  
+  .section-pink {
+    padding: 4rem 1rem;
+    background-color: var(--color-pink);
+    color: var(--color-white-pure);
+  }
+  
+  /* === TITRES === */
+  .title-script {
+    font-family: var(--font-family-script);
+    font-size: 3rem;
+    line-height: 1.2;
+  }
+  
+  @media (min-width: 768px) {
+    .title-script {
+      font-size: 4.5rem;
+    }
+  }
+  
+  .title-script-pink {
+    font-family: var(--font-family-script);
+    font-size: 3rem;
+    line-height: 1.2;
+    color: var(--color-pink);
+  }
+  
+  @media (min-width: 768px) {
+    .title-script-pink {
+      font-size: 4.5rem;
+    }
+  }
+  
+  .title-script-green {
+    font-family: var(--font-family-script);
+    font-size: 3rem;
+    line-height: 1.2;
+    color: var(--color-green);
+  }
+  
+  @media (min-width: 768px) {
+    .title-script-green {
+      font-size: 4.5rem;
+    }
+  }
+  
+  .title-script-white {
+    font-family: var(--font-family-script);
+    font-size: 3rem;
+    line-height: 1.2;
+    color: var(--color-white-pure);
+  }
+  
+  @media (min-width: 768px) {
+    .title-script-white {
+      font-size: 4.5rem;
+    }
+  }
+  
+  .title-script-black {
+    font-family: var(--font-family-script);
+    font-size: 3rem;
+    line-height: 1.2;
+    color: var(--color-black);
+  }
+  
+  @media (min-width: 768px) {
+    .title-script-black {
+      font-size: 4.5rem;
+    }
+  }
+  
+  .title-main {
+    font-family: var(--font-family-sans);
+    font-size: 2.25rem;
+    font-weight: bold;
+    color: var(--color-black);
+  }
+  
+  @media (min-width: 768px) {
+    .title-main {
+      font-size: 3.75rem;
+    }
+  }
+  
+  .title-secondary {
+    font-family: var(--font-family-sans);
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: var(--color-black);
+  }
+  
+  @media (min-width: 768px) {
+    .title-secondary {
+      font-size: 3rem;
+    }
+  }
+  
+  .subtitle {
+    font-family: var(--font-family-sans);
+    font-size: 1.25rem;
+    color: rgba(19, 19, 19, 0.8);
+  }
+  
+  @media (min-width: 768px) {
+    .subtitle {
+      font-size: 1.5rem;
+    }
+  }
+  
+  /* === CONTAINER === */
+  .container-custom {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* === LIENS === */
+  .link {
+    color: var(--color-green);
+    text-decoration: underline;
+    transition: color 0.3s;
+  }
+  
+  .link:hover {
+    color: var(--color-pink);
+  }
+  
+  .link-pink {
+    color: var(--color-pink);
+    text-decoration: underline;
+    transition: color 0.3s;
+  }
+  
+  .link-pink:hover {
+    color: var(--color-green);
+  }
+  
+  .link-no-underline {
+    color: var(--color-green);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .link-no-underline:hover {
+    color: var(--color-pink);
+  }
+  
+  /* === INPUTS === */
+  .input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 2px solid rgba(19, 19, 19, 0.2);
+    background-color: var(--color-white-pure);
+    color: var(--color-black);
+    transition: border-color 0.3s;
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: var(--color-green);
+  }
+  
+  .textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 2px solid rgba(19, 19, 19, 0.2);
+    background-color: var(--color-white-pure);
+    color: var(--color-black);
+    transition: border-color 0.3s;
+    resize: none;
+    min-height: 120px;
+  }
+  
+  .textarea:focus {
+    outline: none;
+    border-color: var(--color-green);
+  }
+  
+  .input-dark {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background-color: var(--color-black);
+    color: var(--color-white-pure);
+    transition: border-color 0.3s;
+  }
+  
+  .input-dark:focus {
+    outline: none;
+    border-color: var(--color-pink);
+  }
+  
+  /* === BADGES === */
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .badge-green {
+    background-color: var(--color-green);
+    color: var(--color-black);
+  }
+  
+  .badge-pink {
+    background-color: var(--color-pink);
+    color: var(--color-white-pure);
+  }
+  
+  .badge-black {
+    background-color: var(--color-black);
+    color: var(--color-white-pure);
+  }
+  
+  .badge-outline-green {
+    background-color: transparent;
+    color: var(--color-green);
+    border: 2px solid var(--color-green);
+  }
+  
+  .badge-outline-pink {
+    background-color: transparent;
+    color: var(--color-pink);
+    border: 2px solid var(--color-pink);
+  }
+  
+  /* === DIVIDERS === */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background-color: rgba(19, 19, 19, 0.1);
+    margin: 2rem 0;
+  }
+  
+  .divider-green {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-green);
+    margin: 2rem 0;
+  }
+  
+  .divider-pink {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-pink);
+    margin: 2rem 0;
+  }
+  
+  /* === GRADIENTS === */
+  .gradient-green-pink {
+    background: linear-gradient(135deg, var(--color-green) 0%, var(--color-pink) 100%);
+  }
+  
+  .gradient-pink-green {
+    background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-green) 100%);
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-green) 0%, var(--color-pink) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* === SHADOWS === */
+  .shadow-green {
+    box-shadow: 0 4px 14px rgba(155, 255, 0, 0.3);
+  }
+  
+  .shadow-pink {
+    box-shadow: 0 4px 14px rgba(251, 3, 115, 0.3);
+  }
+  
+  .shadow-green-lg {
+    box-shadow: 0 10px 30px rgba(155, 255, 0, 0.4);
+  }
+  
+  .shadow-pink-lg {
+    box-shadow: 0 10px 30px rgba(251, 3, 115, 0.4);
+  }
+  
+  /* === ANIMATIONS === */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-in;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+  }
+  
+  .animate-slide-left {
+    animation: slideLeft 0.6s ease-out;
+  }
+  
+  .animate-slide-right {
+    animation: slideRight 0.6s ease-out;
+  }
+}
+
+/* === ANIMATIONS KEYFRAMES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

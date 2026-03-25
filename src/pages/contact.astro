@@ -1,0 +1,195 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Me Contacter">
+  <main style="background-color: #fff; color: #131313; min-height: 100vh;">
+    <div style="max-width: 700px; margin: 0 auto; padding: 3rem 2rem 4rem;">
+
+      <!-- TITRE -->
+      <h1 style="line-height: 1.1; margin-bottom: 3rem; color: #131313; font-weight: normal; text-align: center;">
+        <span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem;">M</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem;">e </span><span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem;">C</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem;">ontacter</span>
+      </h1>
+
+      <!-- LOCALISATION -->
+      <div style="margin-bottom: 2.5rem; font-size: 0.85rem; color: #131313;">
+        <p>Alsace, Nord Franche comté</p>
+        <p>2026</p>
+      </div>
+
+      <!-- FEEDBACK MESSAGE (hidden by default) -->
+      <div id="feedback-message" style="display: none; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 500;"></div>
+
+      <!-- FORMULAIRE -->
+      <form id="contact-form">
+
+        <!-- Nom + Prénom -->
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.75rem;">
+            Nom <span style="opacity: 0.5;">(requis)</span>
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <input
+              type="text"
+              name="nom"
+              placeholder="Nom"
+              required
+              style="width: 100%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
+            />
+            <input
+              type="text"
+              name="prenom"
+              placeholder="Prénom"
+              style="width: 100%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
+            />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;">
+            Email <span style="opacity: 0.5;">(requis)</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            required
+            style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
+          />
+        </div>
+
+        <!-- Newsletter checkbox -->
+        <div style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          <input
+            type="checkbox"
+            id="newsletter"
+            name="newsletter"
+            style="accent-color: #131313; width: 14px; height: 14px; cursor: pointer;"
+          />
+          <label for="newsletter" style="font-size: 0.75rem; color: #131313; opacity: 0.6; cursor: pointer;">
+            Inscrivez-vous pour recevoir les actualités et les mises à jour
+          </label>
+        </div>
+
+        <!-- Message -->
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;">
+            Message
+          </label>
+          <input
+            type="text"
+            name="message"
+            style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
+          />
+        </div>
+
+        <!-- Téléphone -->
+        <div style="margin-bottom: 2rem;">
+          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem; margin-top: 1rem;">
+            Téléphone
+          </label>
+          <input
+            type="tel"
+            name="telephone"
+            placeholder="+33 6 00 00 00 00"
+            style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
+          />
+        </div>
+
+        <!-- Bouton Envoyer -->
+        <button
+          type="submit"
+          style="background-color: #131313; color: #9bff00; padding: 0.65rem 1.75rem; border-radius: 9999px; border: none; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; cursor: pointer; font-weight: 500;"
+        >
+          Envoyer
+        </button>
+
+      </form>
+
+      <!-- DIVIDER -->
+      <hr style="border: none; border-top: 1px solid rgba(19,19,19,0.15); margin: 3.5rem 0;" />
+
+      <!-- FOOTER CONTACT -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <a href="mailto:lisonpru06@gmail.com" style="font-size: 1.5rem; font-weight: bold; color: #131313; text-decoration: none;">
+          lisonpru06@gmail.com
+        </a>
+        <a href="tel:+33768157774" style="font-size: 1.5rem; font-weight: bold; color: #131313; text-decoration: none;">
+          (+33) 768 157 774
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import PocketBase from 'https://cdn.skypack.dev/pocketbase';
+
+    const pb = new PocketBase('http://127.0.0.1:8090');
+    const form = document.getElementById('contact-form');
+    const feedbackMessage = document.getElementById('feedback-message');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const nom = formData.get('nom');
+      const prenom = formData.get('prenom');
+      const email = formData.get('email');
+      const telephone = formData.get('telephone');
+      const message = formData.get('message');
+
+      // Validation
+      if (!nom || !email) {
+        feedbackMessage.style.display = 'block';
+        feedbackMessage.style.backgroundColor = '#fb0373';
+        feedbackMessage.style.color = '#fff';
+        feedbackMessage.textContent = 'Merci de remplir les champs requis (Nom et Email).';
+        return;
+      }
+
+      // Désactiver le bouton pendant l'envoi
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours...';
+
+      try {
+        // Délai minimum de 1 seconde pour que l'utilisateur voie le loader
+        const [response] = await Promise.all([
+          pb.collection('contact').create({
+            nom_contact: nom,
+            prenom_contact: prenom,
+            email_contact: email,
+            telephone_contact: telephone || '',
+            message_contact: message || '',
+          }),
+          new Promise(resolve => setTimeout(resolve, 1000))
+        ]);
+
+        // Succès
+        feedbackMessage.style.display = 'block';
+        feedbackMessage.style.backgroundColor = '#9bff00';
+        feedbackMessage.style.color = '#131313';
+        feedbackMessage.textContent = '✓ Votre message a bien été envoyé ! Nous vous recontacterons rapidement.';
+        
+        // Reset le formulaire
+        form.reset();
+
+        // Masquer le message après 10 secondes
+        setTimeout(() => {
+          feedbackMessage.style.display = 'none';
+        }, 10000);
+
+      } catch (err) {
+        console.error(err);
+        feedbackMessage.style.display = 'block';
+        feedbackMessage.style.backgroundColor = '#fb0373';
+        feedbackMessage.style.color = '#fff';
+        feedbackMessage.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer';
+      }
+    });
+  </script>
+</Layout>

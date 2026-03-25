@@ -1,0 +1,222 @@
+---
+// src/components/HeroScramble.astro
+import introVideo from '../assets/intro.mp4';
+---
+
+<section class="hero-section relative overflow-hidden" style="height: 400vh; background: #000;">
+  <!-- Fond blanc derrière tout, disparaît quand la vidéo est plein écran -->
+  <div class="white-bg"></div>
+
+  <div class="hero-content-wrapper">
+    <div class="container-custom h-screen flex items-center justify-between relative">
+      <!-- Texte à gauche -->
+      <div class="hero-text-container z-10 flex flex-col justify-center">
+        <!-- <p class="text-xl md:text-2xl mb-12 text-black max-w-2xl leading-relaxed">
+          Bla Bla Jsp encore quoi mettre ici mais c'est pour tester le scroll et l'animation de la vidéo
+        </p> -->
+        <h1 
+          id="scramble-text" 
+          class="hero-title text-green font-bold tracking-tight leading-none cursor-pointer select-none"
+          data-value="LISONPRUVOST"
+        >
+          LISONPRUVOST
+        </h1>
+      </div>
+
+      <!-- Vidéo Demo Reel à droite -->
+      <div class="video-container">
+        <div class="video-wrapper relative">
+          <video
+            id="demo-video"
+            class="rounded-lg shadow-2xl object-cover"
+            autoplay
+            loop
+            muted
+            playsinline
+          >
+            <source src={introVideo} type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+  }
+
+  /* Fond blanc collé derrière tout, z-index 0 = derrière les éléments */
+  .white-bg {
+    position: fixed;
+    inset: 0;
+    background: var(--color-white-violet, #f5f3ff);
+    z-index: 0;
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  .hero-content-wrapper {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title {
+    font-size: clamp(4rem, 12vw, 10rem);
+    white-space: nowrap;
+  }
+
+  .video-container {
+    position: fixed;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .video-wrapper {
+    transition: none;
+  }
+
+  .video-wrapper video {
+    display: block;
+    transition: none;
+  }
+</style>
+
+<script>
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const title = document.getElementById("scramble-text");
+  
+  let interval: number | null = null;
+  
+  if (title) {
+    title.addEventListener("mouseenter", (event) => {
+      let iteration = 0;
+      const target = event.target as HTMLElement;
+      const originalText = target.dataset.value || "";
+      
+      clearInterval(interval!);
+      
+      interval = window.setInterval(() => {
+        target.innerText = originalText
+          .split("")
+          .map((letter, index) => {
+            if (index < iteration) {
+              return originalText[index];
+            }
+            return letters[Math.floor(Math.random() * 26)];
+          })
+          .join("");
+        
+        if (iteration >= originalText.length) {
+          clearInterval(interval!);
+        }
+        
+        iteration += 1 / 3;
+      }, 30);
+    });
+  }
+
+  const videoContainer = document.querySelector(".video-container") as HTMLElement;
+  const video = document.getElementById("demo-video") as HTMLVideoElement;
+  const heroSection = document.querySelector(".hero-section") as HTMLElement;
+  const heroText = document.querySelector(".hero-text-container") as HTMLElement;
+  const whiteBg = document.querySelector(".white-bg") as HTMLElement;
+
+  const INITIAL_WIDTH = 400;
+  const INITIAL_HEIGHT = 225;
+  const INITIAL_RIGHT = 80;
+  
+  let ticking = false;
+
+  function easeOutCubic(x: number): number {
+    return 1 - Math.pow(1 - x, 3);
+  }
+
+  function updateVideoOnScroll() {
+    if (!heroSection || !videoContainer || !video || !heroText || !whiteBg) return;
+
+    const scrollY = window.scrollY;
+    const sectionHeight = heroSection.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const maxScroll = sectionHeight - windowHeight;
+    const rawScrollPercent = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+
+    // Phase 1 : Expansion (0% → 75%)
+    const expansionPhaseEnd = 0.75;
+    let expansionPercent = Math.min(rawScrollPercent / expansionPhaseEnd, 1);
+    expansionPercent = easeOutCubic(expansionPercent);
+
+    // Phase 2 : vidéo disparaît (75% → 100%)
+    const disappearPhaseStart = 0.75;
+    let disappearPercent = 0;
+    if (rawScrollPercent > disappearPhaseStart) {
+      disappearPercent = (rawScrollPercent - disappearPhaseStart) / (1 - disappearPhaseStart);
+    }
+
+    // Fond blanc disparaît entre 70% et 80% du scroll (quand vidéo plein écran)
+    // Après ça le fond noir de la section est visible → transition fluide vers section suivante noire
+    const whiteStart = 0.70;
+    const whiteEnd = 0.80;
+    let whiteOpacity = 1;
+    if (rawScrollPercent > whiteStart) {
+      whiteOpacity = 1 - Math.min((rawScrollPercent - whiteStart) / (whiteEnd - whiteStart), 1);
+    }
+
+    // Dès qu'on sort de la hero section, on retire complètement le white-bg
+    const sectionBottom = heroSection.offsetTop + sectionHeight;
+    if (scrollY >= sectionBottom) {
+      whiteBg.style.display = 'none';
+    } else {
+      whiteBg.style.display = 'block';
+      whiteBg.style.opacity = `${whiteOpacity}`;
+    }
+
+    const finalWidth = window.innerWidth;
+    const finalHeight = window.innerHeight;
+    
+    const currentWidth = INITIAL_WIDTH + (finalWidth - INITIAL_WIDTH) * expansionPercent;
+    const currentHeight = INITIAL_HEIGHT + (finalHeight - INITIAL_HEIGHT) * expansionPercent;
+    const currentRight = INITIAL_RIGHT * (1 - expansionPercent);
+
+    videoContainer.style.top = `50%`;
+    videoContainer.style.right = `${currentRight}px`;
+    
+    video.style.width = `${currentWidth}px`;
+    video.style.height = `${currentHeight}px`;
+    video.style.borderRadius = expansionPercent > 0.8 ? '0' : '0.5rem';
+
+    if (disappearPercent > 0) {
+      videoContainer.style.opacity = `${1 - disappearPercent}`;
+      const disappearTranslateY = -50 - (disappearPercent * 30);
+      videoContainer.style.transform = `translateY(${disappearTranslateY}%)`;
+    } else {
+      videoContainer.style.opacity = '1';
+      videoContainer.style.transform = 'translateY(-50%)';
+    }
+
+    // Texte monte et disparaît en phase 1
+    const textTranslateY = -(expansionPercent * 200);
+    const textOpacity = 1 - (expansionPercent * 1.5);
+    heroText.style.transform = `translateY(${textTranslateY}px)`;
+    heroText.style.opacity = `${Math.max(0, textOpacity)}`;
+
+    ticking = false;
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateVideoOnScroll);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener("scroll", requestTick);
+  window.addEventListener("resize", updateVideoOnScroll);
+  
+  updateVideoOnScroll();
+</script>

@@ -1,0 +1,161 @@
+---
+interface Props {
+  text: string;
+  variant?: 'single' | 'cross' | 'parallel';
+  speed?: number;
+}
+
+const { text, variant = 'single', speed = 20 } = Astro.props;
+
+// Répéter le texte pour créer un effet infini
+const repeatedText = Array(10).fill(text).join(' • ');
+---
+
+{variant === 'single' && (
+  <div class="scrolling-banner-container">
+    <div class="scrolling-banner" style={`--speed: ${speed}s`}>
+      <div class="scrolling-content">
+        {repeatedText}
+      </div>
+      <div class="scrolling-content" aria-hidden="true">
+        {repeatedText}
+      </div>
+    </div>
+  </div>
+)}
+
+{variant === 'cross' && (
+  <div class="scrolling-banner-cross">
+    <div class="scrolling-banner diagonal-top" style={`--speed: ${speed}s`}>
+      <div class="scrolling-content">
+        {repeatedText}
+      </div>
+      <div class="scrolling-content" aria-hidden="true">
+        {repeatedText}
+      </div>
+    </div>
+    <div class="scrolling-banner diagonal-bottom" style={`--speed: ${speed * 1.2}s`}>
+      <div class="scrolling-content">
+        {repeatedText}
+      </div>
+      <div class="scrolling-content" aria-hidden="true">
+        {repeatedText}
+      </div>
+    </div>
+  </div>
+)}
+
+{variant === 'parallel' && (
+  <div class="scrolling-banner-parallel">
+    <div class="scrolling-banner" style={`--speed: ${speed}s`}>
+      <div class="scrolling-content">
+        {repeatedText}
+      </div>
+      <div class="scrolling-content" aria-hidden="true">
+        {repeatedText}
+      </div>
+    </div>
+    <div class="scrolling-banner reverse" style={`--speed: ${speed}s`}>
+      <div class="scrolling-content">
+        {repeatedText}
+      </div>
+      <div class="scrolling-content" aria-hidden="true">
+        {repeatedText}
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  /* === CONTENEUR SINGLE === */
+  .scrolling-banner-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* === CONTENEUR CROSS (X) === */
+  .scrolling-banner-cross {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === CONTENEUR PARALLEL === */
+  .scrolling-banner-parallel {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* === BANDE DE BASE === */
+  .scrolling-banner {
+    background-color: var(--color-pink);
+    padding: 1.5rem 0;
+    display: flex;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === BANDES DIAGONALES === */
+  .diagonal-top {
+    position: absolute;
+    width: 150%;
+    left: -25%;
+    top: 20%;
+    transform: rotate(-15deg);
+    transform-origin: center;
+  }
+
+  .diagonal-bottom {
+    position: absolute;
+    width: 150%;
+    left: -25%;
+    top: 60%;
+    transform: rotate(15deg);
+    transform-origin: center;
+  }
+
+  /* === BANDE INVERSÉE === */
+  .reverse .scrolling-content {
+    animation-direction: reverse;
+  }
+
+  .scrolling-banner-parallel .scrolling-banner:first-child {
+    margin-bottom: 2rem;
+  }
+
+  /* === CONTENU DÉFILANT === */
+  .scrolling-content {
+    display: inline-block;
+    font-family: var(--font-family-sans);
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--color-black);
+    padding: 0 2rem;
+    animation: scroll var(--speed, 20s) linear infinite;
+  }
+
+  @media (min-width: 768px) {
+    .scrolling-content {
+      font-size: 3rem;
+    }
+  }
+
+  /* === ANIMATION === */
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* === HOVER PAUSE (optionnel) === */
+  .scrolling-banner:hover .scrolling-content {
+    animation-play-state: paused;
+  }
+</style>

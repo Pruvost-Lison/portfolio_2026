@@ -1,0 +1,467 @@
+---
+interface Props {
+  bannerText?: string;
+  titleLine1?: string;
+  titleLine2?: string;
+  cardSvg: any;
+  bioTitle?: string;
+  bioContent?: string;
+}
+
+const { 
+  bannerText = "PROJECTS",
+  titleLine1 = "À",
+  titleLine2 = "ropos",
+  cardSvg,
+  bioTitle = "Lis",
+  bioContent = ""
+} = Astro.props;
+
+const repeatedText = Array(15).fill(bannerText).join(' - ') + ' - ';
+
+import intropicture from '../assets/Photo_landing_page.png';
+---
+
+<section class="hero-section section-dark">
+  <div class="scrolling-banners-cross">
+    <div class="scrolling-banner-wrapper banner-top">
+      <div class="scrolling-banner-pink">
+        <div class="scrolling-content">{repeatedText}</div>
+        <div class="scrolling-content" aria-hidden="true">{repeatedText}</div>
+      </div>
+    </div>
+    <div class="scrolling-banner-wrapper banner-bottom">
+      <div class="scrolling-banner-pink reverse">
+        <div class="scrolling-content">{repeatedText}</div>
+        <div class="scrolling-content" aria-hidden="true">{repeatedText}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="container-custom">
+      <div class="hero-title">
+        <h1 style="line-height: 1.1; margin-bottom: 3rem; color: var(--color-green); font-weight: normal; text-align: center;">
+          <span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 9rem;">{titleLine1} </span><span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 9rem;">P</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 6rem;">{titleLine2}</span>
+        </h1>
+      </div>
+
+      <div class="card-3d-container" id="card3d">
+        <div class="card-3d">
+          <div class="card-inner">
+            <img src={cardSvg.src} alt="Card" class="card-svg" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Bio -->
+<section class="section-white bio-section">
+  <div class="container-custom">
+    <div class="bio-grid">
+      <div class="bio-left">
+        <h2 class="bio-greeting" data-word-reveal>
+          Salut, moi c'est Lison Pruvost mais vous me retrouver sous le nom de <span class="bio-name" data-keep>{bioTitle}</span> dans mes design je suis étudiante de MMI en filière création numérique
+        </h2>
+        <a href="/a-propos" class="btn-voir-plus">Voir plus</a>
+      </div>
+      <div class="bio-right">
+        <div class="bio-text" data-word-reveal>
+          <p>{bioContent} Je suis en 2eme année de BUT MMI à Montbéliard. J'adore la création numérique sous toutes ses formes : le design, le web, la vidéo, l'important pour moi, c'est que ça ait du sens et que ça se ressente.</p>
+          <br/>
+          <p>J'aime construire des projets qui ne se contentent pas d'être beaux mais qu'ils soient utiles, et bien pensés.</p>
+          <br/>
+          <p>Curieuse de nature, je touche un peu à tout et j'adore apprendre et continuer à évoluer dans le front-end et l'UI/UX, tout en gardant mon côté créatif et expérimental.</p>
+          <br/>
+          <p>Vous retrouver sur le site un échantillon de mes meilleurs projets. Merci d'avoir consulter mon portefolio, j'espère qu'il vous plairas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo reveal : fade + unblur -->
+    <div class="intro-picture-container">
+      <div class="photo-reveal-wrapper" id="photoReveal">
+        <img
+          src={intropicture.src}
+          alt="Lison Pruvost - Photo"
+          class="intro-picture"
+          id="photoMain"
+        />
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* === HERO SECTION === */
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .scrolling-banners-cross {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+
+  .scrolling-banner-wrapper {
+    position: absolute;
+    width: 200%;
+    left: -50%;
+    overflow: visible;
+  }
+
+  .banner-top {
+    top: 10%;
+    transform: rotate(-8deg);
+    transform-origin: center;
+  }
+
+  .banner-bottom {
+    top: 15%;
+    transform: rotate(8deg);
+    transform-origin: center;
+  }
+
+  .scrolling-banner-pink {
+    background-color: var(--color-pink);
+    padding: 1.25rem 0;
+    display: flex;
+    white-space: nowrap;
+  }
+
+  .scrolling-content {
+    display: inline-block;
+    font-family: var(--font-family-sans);
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--color-black);
+    letter-spacing: 0.1em;
+    animation: scroll 30s linear infinite;
+  }
+
+  .reverse .scrolling-content {
+    animation: scrollReverse 25s linear infinite;
+  }
+
+  @media (min-width: 768px) {
+    .scrolling-content { font-size: 2rem; }
+  }
+
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes scrollReverse {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+
+  /* === HERO CONTENT === */
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 35vh;
+    margin-top: 28vh;
+    margin-bottom: 15vh;
+  }
+
+  .hero-title {
+    text-align: center;
+    margin-top: 15vh;
+    margin-bottom: 15vh;
+  }
+
+  /* === CARTE 3D === */
+  .card-3d-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+  }
+
+  .card-3d {
+    width: 100%;
+    max-width: 550px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    transition: transform 0.1s ease-out;
+    transform-style: preserve-3d;
+  }
+
+  .card-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 20px 60px rgba(155, 255, 0, 0.3));
+    transform: translateZ(0);
+  }
+
+  /* === BIO SECTION === */
+  .bio-section {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    .bio-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+      margin-bottom: 5rem;
+    }
+  }
+
+  .bio-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.5rem;
+  }
+
+  .bio-greeting {
+    font-family: var(--font-family-sans);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-black);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .bio-greeting { font-size: 1.875rem; }
+  }
+
+  .bio-name {
+    color: var(--color-green);
+    font-weight: bold;
+  }
+
+  .bio-right { padding-top: 0.5rem; }
+
+  .bio-text {
+    font-family: var(--font-family-sans);
+    font-size: 1rem;
+    color: var(--color-black);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .bio-text { font-size: 1.0625rem; }
+  }
+
+  /* === WORD REVEAL === */
+  /* Les spans mot sont cachés par défaut */
+  .word {
+    display: inline;
+    opacity: 0;
+    filter: blur(4px);
+    transition: opacity 0.35s ease, filter 0.35s ease;
+    /* Pas de transform pour garder le layout intact */
+  }
+
+  .word.is-visible {
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  /* === BOUTON === */
+  .btn-voir-plus {
+    display: inline-block;
+    padding: 0.75rem 2.25rem;
+    background-color: transparent;
+    color: var(--color-black);
+    border: 2px solid var(--color-black);
+    border-radius: 50px;
+    font-family: var(--font-family-sans);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+  }
+
+  .btn-voir-plus:hover {
+    background-color: var(--color-pink);
+    color: var(--color-white-pure, #fff);
+    border-color: var(--color-pink);
+  }
+
+  /* === PHOTO REVEAL === */
+  .intro-picture-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .photo-reveal-wrapper {
+    width: 60%;
+  }
+
+  @media (max-width: 768px) {
+    .photo-reveal-wrapper { width: 90%; }
+  }
+
+  .intro-picture {
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 0;
+    filter: blur(16px);
+    transform: translateY(12px);
+    transition: opacity 1s ease, filter 1.2s ease, transform 1s ease;
+  }
+
+  .intro-picture.is-visible {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  /* ============================================
+     CARTE 3D
+  ============================================ */
+  const card3d = document.getElementById('card3d');
+  const cardInner = card3d?.querySelector('.card-inner') as HTMLElement | null;
+
+  if (card3d && cardInner) {
+    card3d.addEventListener('mousemove', (e: MouseEvent) => {
+      const rect = card3d.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rotateX = ((y - rect.height / 2) / rect.height) * -30;
+      const rotateY = ((x - rect.width / 2) / rect.width) * 30;
+      cardInner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+    });
+    card3d.addEventListener('mouseleave', () => {
+      cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+    });
+  }
+
+  /* ============================================
+     WORD-BY-WORD SCROLL REVEAL — avec reset
+  ============================================ */
+  function wrapWords(container: HTMLElement) {
+    const walker = document.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node) {
+          let p = node.parentElement;
+          while (p && p !== container) {
+            if (p.hasAttribute('data-keep')) return NodeFilter.FILTER_REJECT;
+            p = p.parentElement;
+          }
+          return node.textContent!.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        }
+      }
+    );
+
+    const nodes: Text[] = [];
+    let n: Node | null;
+    while ((n = walker.nextNode())) nodes.push(n as Text);
+
+    nodes.forEach((textNode) => {
+      const parent = textNode.parentNode!;
+      const frag = document.createDocumentFragment();
+      const parts = textNode.textContent!.split(/(\s+)/);
+      parts.forEach((part) => {
+        if (/^\s+$/.test(part)) {
+          frag.appendChild(document.createTextNode(part));
+        } else if (part.length > 0) {
+          const span = document.createElement('span');
+          span.className = 'word';
+          // ✅ Style inline immédiat — contourne Tailwind purge + timing CSS
+          span.style.cssText = 'display:inline; opacity:0; filter:blur(4px); transition:opacity 0.4s ease, filter 0.4s ease;';
+          span.textContent = part;
+          frag.appendChild(span);
+        }
+      });
+      parent.replaceChild(frag, textNode);
+    });
+  }
+
+  // Wrap tous les conteneurs
+  document.querySelectorAll<HTMLElement>('[data-word-reveal]').forEach(wrapWords);
+
+  // Observer par mot — reset à la sortie du viewport
+  const wordObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const word = entry.target as HTMLElement;
+        if (entry.isIntersecting) {
+          const container = word.closest('[data-word-reveal]')!;
+          const allWords = Array.from(container.querySelectorAll('.word'));
+          const idx = allWords.indexOf(word);
+          const delay = Math.min(idx * 35, 700);
+          setTimeout(() => {
+            word.style.opacity = '1';
+            word.style.filter = 'blur(0px)';
+          }, delay);
+        } else {
+          // Reset : repasse invisible pour le prochain passage
+          word.style.opacity = '0';
+          word.style.filter = 'blur(4px)';
+        }
+      });
+    },
+    {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
+    }
+  );
+
+  document.querySelectorAll('.word').forEach((w) => wordObserver.observe(w));
+
+  /* ============================================
+     PHOTO REVEAL — fade + unblur
+  ============================================ */
+  const photoImg = document.getElementById('photoMain') as HTMLImageElement | null;
+
+  if (photoImg) {
+    const photoObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            photoImg.classList.add('is-visible');
+          } else {
+            photoImg.classList.remove('is-visible');
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    photoObserver.observe(photoImg);
+  }
+</script>

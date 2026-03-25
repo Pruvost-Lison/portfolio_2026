@@ -1,0 +1,83 @@
+---
+// src/components/Footer.astro
+---
+
+<footer class="bg-black text-white-pure">
+  <div class="container-custom py-12">
+    <!-- Contenu principal du footer -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <!-- Colonne gauche -->
+      <div>
+        <h2 class="title-script-green mb-8">jellis©</h2>
+        
+        <div class="mb-8">
+          <h3 class="text-xl font-bold mb-4">Projets</h3>
+          <ul class="space-y-2 text-base">
+            <li><a href="/projets?filtre=Design%20graphique" class="hover:text-green transition">Design graphique</a></li>
+            <li><a href="/projets?filtre=D%C3%A9veloppement%20web" class="hover:text-green transition">Développement web</a></li>
+            <li><a href="/projets?filtre=Motion%20design" class="hover:text-green transition">Motion design</a></li>
+            <li><a href="/projets?filtre=Audiovisuel" class="hover:text-green transition">Audiovisuel</a></li>
+          </ul>
+        </div>
+        
+        <a href="mailto:lison.pruvoststudio@gmail.com" class="text-xl hover:text-green transition">
+          lison.pruvoststudio@gmail.com
+        </a>
+      </div>
+      
+      <!-- Colonne droite -->
+      <div class="text-left md:text-right">
+        <h3 class="text-xl font-bold mb-4">Contact & infos</h3>
+        <ul class="space-y-2 text-base mb-8">
+          <li><a href="/contact" class="hover:text-pink transition">Contact</a></li>
+          <li><a href="/a-propos" class="hover:text-pink transition">À propos</a></li>
+          <li><a href="/mentions-legales" class="hover:text-pink transition">Mentions légales</a></li>
+        </ul>
+        
+        <a href="tel:+33768157774" class="text-2xl font-bold hover:text-pink transition">
+          (+33) 768 157 774
+        </a>
+      </div>
+    </div>
+    
+    <!-- Ligne de séparation -->
+    <div class="border-t border-white-pure/20 pt-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+        <p class="text-white-pure/70">
+          © 2026 — Lison Pruvost • Code source disponible sur GitHub • Tous droits réservés.
+        </p>
+        
+        <div class="flex gap-4">
+          <a href="#" aria-label="Email" class="hover:text-green transition">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="hover:text-green transition">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+          </a>
+        </div>
+        
+        <a href="#" class="text-white-pure/70 hover:text-pink transition">
+          Politique de confidentialité
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bande verte en bas avec nom géant -->
+  <div class="bg-green py-8 overflow-hidden">
+    <div class="text-black font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter whitespace-nowrap">
+      LISONPRUVOST
+    </div>
+  </div>
+</footer>
+
+<style>
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>

@@ -1,0 +1,206 @@
+---
+import Layout from '../layouts/Layout.astro';
+import photoMentions from '../assets/photo_mentions.svg';
+---
+
+<Layout title="Mentions Légales">
+  <main style="background-color: #131313; color: #ffffff; min-height: 100vh;">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 4rem 2rem;">
+
+      <!-- TITRE PRINCIPAL -->
+      <h1 style="line-height: 1.1; margin-bottom: 3rem; font-weight: normal; text-align: left;">
+        <span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem; color: #9bff00;">M</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem; color: #ffffff;">entions </span><span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem; color: #9bff00;">L</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem; color: #ffffff;">égales</span>
+      </h1>
+
+      <!-- NAVIGATION + INTRO -->
+      <div style="display: grid; grid-template-columns: 220px 1fr; gap: 4rem; margin-bottom: 5rem; align-items: start;">
+
+        <!-- Boutons ancre -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <a href="#politique" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem; font-family: Helvetica, Arial, sans-serif; transition: color 0.2s;"
+             onmouseover="this.style.color='#9bff00'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
+            [01] &nbsp; Politique de confidentialité
+          </a>
+          <a href="#mentions" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem; font-family: Helvetica, Arial, sans-serif; transition: color 0.2s;"
+             onmouseover="this.style.color='#9bff00'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
+            [02] &nbsp; Mentions légales
+          </a>
+        </div>
+
+        <!-- Texte intro -->
+        <p style="color: rgba(255,255,255,0.65); font-size: 0.9rem; line-height: 1.8; max-width: 560px; font-family: Helvetica, Arial, sans-serif;">
+          L'accès et la navigation sur mon site Web impliquent l'acceptation de la politique de confidentialité et des mentions légales. L'objectif est d'assurer la base juridique nécessaire pour garantir la confidentialité des informations proposées sur ce site et vous offrir la meilleure expérience possible.
+        </p>
+      </div>
+
+      <!-- SECTION 01 - Politique de confidentialité -->
+      <div id="politique" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-bottom: 4rem; align-items: start;">
+
+        <!-- Image -->
+        <div style="overflow: hidden; border-radius: 0.5rem;">
+          <img src={photoMentions.src} alt="Mentions légales" style="width: 100%; height: 380px; object-fit: cover; display: block;" />
+        </div>
+
+        <!-- Titre + infos générales -->
+        <div>
+          <p style="font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-bottom: 0.5rem; font-family: Helvetica, Arial, sans-serif;">[01]</p>
+          <h2 style="font-weight: normal; margin-bottom: 2rem; line-height: 1.1;">
+            <span style="font-family: 'Edwardian Script', cursive; font-size: 3.5rem; color: #ffffff;">P</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 1.8rem; color: #ffffff;">olitique de </span><span style="font-family: 'Edwardian Script', cursive; font-size: 3.5rem; color: #ffffff;">c</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 1.8rem; color: #ffffff;">onfidentialité</span>
+          </h2>
+
+          <p style="color: #9bff00; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.5rem; font-family: Helvetica, Arial, sans-serif;">Informations générales</p>
+          <p style="color: rgba(255,255,255,0.65); font-size: 0.85rem; line-height: 1.8; font-family: Helvetica, Arial, sans-serif;">
+            Le présent site est un portfolio personnel destiné à présenter mes projets et mon parcours dans le domaine de la création numérique.<br/><br/>
+            Responsable du site : Lison Pruvost<br/>
+            Contact : <a href="mailto:lisonpru06@gmail.com" style="color: #9bff00; text-decoration: underline;">lisonpru06@gmail.com</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 2rem 0 3rem;" />
+
+      <!-- BLOCS LÉGAUX -->
+      <div style="max-width: 760px;">
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Données personnelles collectées</p>
+          <p class="legal-text">Ce site peut collecter des données personnelles uniquement lorsque l'utilisateur les transmet volontairement, par exemple via :</p>
+          <ul class="legal-list">
+            <li>un formulaire de contact</li>
+            <li>un envoi d'email direct</li>
+          </ul>
+          <p class="legal-text">Les données susceptibles d'être collectées sont :</p>
+          <ul class="legal-list">
+            <li>nom ou pseudonyme</li>
+            <li>adresse email</li>
+            <li>contenu du message</li>
+          </ul>
+          <p class="legal-text">Aucune donnée n'est collectée à l'insu de l'utilisateur.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Utilisation des données</p>
+          <p class="legal-text">Les données personnelles collectées sont utilisées uniquement pour :</p>
+          <ul class="legal-list">
+            <li>répondre aux messages et demandes de contact</li>
+            <li>échanger dans un cadre professionnel ou académique</li>
+          </ul>
+          <p class="legal-text">Ces données ne sont en aucun cas vendues, cédées ou transmises à des tiers.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Durée de conservation</p>
+          <p class="legal-text">Les données sont conservées uniquement le temps nécessaire au traitement des échanges, sauf demande explicite de suppression de la part de l'utilisateur.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Droits des utilisateurs</p>
+          <p class="legal-text">Conformément à la réglementation en vigueur (RGPD), vous disposez des droits suivants concernant vos données personnelles :</p>
+          <ul class="legal-list">
+            <li>droit d'accès</li>
+            <li>droit de rectification</li>
+            <li>droit de suppression</li>
+            <li>droit à la limitation du traitement</li>
+          </ul>
+          <p class="legal-text">Pour exercer ces droits, vous pouvez me contacter : <a href="mailto:lisonpru06@gmail.com" style="color: #9bff00; text-decoration: underline;">lisonpru06@gmail.com</a></p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Propriété intellectuelle</p>
+          <p class="legal-text">L'ensemble des contenus présents sur ce site (textes, images, projets, graphismes, vidéos, code, etc.) est protégé par le droit d'auteur. Toute reproduction, modification ou utilisation sans autorisation préalable est interdite.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Responsabilité</p>
+          <p class="legal-text">Les informations présentées sur ce site sont fournies à titre informatif. Malgré le soin apporté à leur mise à jour, je ne peux garantir l'exactitude ou l'exhaustivité des contenus. Le site peut contenir des liens vers des sites externes. Je ne suis pas responsable du contenu ou des pratiques de ces sites tiers.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Modification de la politique de confidentialité</p>
+          <p class="legal-text">Cette politique de confidentialité peut être modifiée à tout moment afin de rester conforme aux évolutions légales ou techniques.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Cookies et traceurs</p>
+          <p class="legal-text">Ce site est un portfolio personnel et ne contient aucun outil de suivi, d'analyse ou de publicité. Aucun cookie n'est utilisé à des fins commerciales ou statistiques. Seuls des éléments techniques indispensables au bon fonctionnement du site peuvent être présents.</p>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 3rem 0;" />
+
+      <!-- SECTION 02 - Mentions légales -->
+      <div id="mentions" style="max-width: 760px;">
+        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-bottom: 0.5rem; font-family: Helvetica, Arial, sans-serif;">[02]</p>
+        <h2 style="font-weight: normal; margin-bottom: 2rem; line-height: 1.1;">
+          <span style="font-family: 'Edwardian Script', cursive; font-size: 3.5rem; color: #ffffff;">M</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 1.8rem; color: #ffffff;">entions </span><span style="font-family: 'Edwardian Script', cursive; font-size: 3.5rem; color: #ffffff;">L</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 1.8rem; color: #ffffff;">égales</span>
+        </h2>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Éditeur du site</p>
+          <p class="legal-text">
+            Lison Pruvost<br/>
+            Portfolio personnel — création numérique<br/>
+            Contact : <a href="mailto:lisonpru06@gmail.com" style="color: #9bff00; text-decoration: underline;">lisonpru06@gmail.com</a>
+          </p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Hébergement</p>
+          <p class="legal-text">Ce site est hébergé par un prestataire tiers. Pour toute information relative à l'hébergement, vous pouvez me contacter directement.</p>
+        </div>
+
+        <div class="legal-block">
+          <p class="legal-subtitle">Propriété du contenu</p>
+          <p class="legal-text">Tous les contenus présents sur ce site (textes, visuels, projets) sont la propriété exclusive de Lison Pruvost, sauf mention contraire. Toute reproduction sans autorisation est interdite.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .legal-block {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .legal-subtitle {
+    color: #9bff00;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.6rem;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .legal-text {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .legal-list {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    padding-left: 1.25rem;
+    list-style: disc;
+    margin-bottom: 0.5rem;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  @media (max-width: 768px) {
+    div[style*="grid-template-columns: 220px"] {
+      grid-template-columns: 1fr !important;
+    }
+    div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
