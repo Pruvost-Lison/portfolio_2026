@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Preloader from '../components/Preloader.astro';
 import HeroScramble from '../components/HeroScramble.astro';
 import IndexProjet from '../components/IndexProjet.astro';
 import HeroAbout from '../components/HeroAbout.astro';
@@ -10,29 +11,66 @@ import PosterSelection from '../components/PosterSelection.astro';
 import photoMentions from '../assets/photo_mentions.svg';
 ---
 
+
 <Layout title="Lison Pruvost - Portfolio">
+  <Preloader />
   <div class="custom-cursor" id="cursor"></div>
   <div class="custom-cursor-dot" id="cursor-dot"></div>
   <HeroScramble />
-
+ 
   <HeroAbout 
     bannerText="PORTFOLIO"
     titleLine1="À"
     titleLine2="ropos"
     cardSvg={introcard}
   />
-
+ 
   <IndexProjet />
   <StackCards />
   <PosterSelection />
-
+ 
  
 </Layout>
-
+ 
+<!-- ═══════════════════════════════════════════════════════════════
+     CORRECTION DES BANDES ROSES DU HERO (seul ajout par rapport à ton code)
+     - même hauteur + même centre de rotation → croisement pile au milieu
+     - white-space: pre → plus de "-PORTFOLIO" collé
+     - boucle à -100% → défilement continu, sans saut
+     Pour monter / descendre le croisement : change "top: 12.5%".
+     ═══════════════════════════════════════════════════════════════ -->
+<style is:global>
+  .hero-section .banner-top,
+  .hero-section .banner-bottom {
+    top: 12.5% !important;
+    transform-origin: center !important;
+  }
+  .hero-section .banner-top    { transform: rotate(-8deg) !important; }
+  .hero-section .banner-bottom { transform: rotate(8deg) !important; }
+ 
+  .hero-section .scrolling-content {
+    flex-shrink: 0;
+    white-space: pre !important;
+    animation: bannerLoop 60s linear infinite !important;
+  }
+  .hero-section .reverse .scrolling-content {
+    animation: bannerLoopReverse 50s linear infinite !important;
+  }
+ 
+  @keyframes bannerLoop {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+  }
+  @keyframes bannerLoopReverse {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+  }
+</style>
+ 
 <style>
-
+ 
     * { cursor: none; }
-
+ 
   .custom-cursor {
     width: 36px; height: 36px;
     border: 1.5px solid var(--color-green, #b8f000);
@@ -52,13 +90,13 @@ import photoMentions from '../assets/photo_mentions.svg';
     transform: translate(-50%, -50%);
   }
   .custom-cursor.hovering { width: 56px; height: 56px; background: rgba(184,240,0,0.08); }
-
+ 
   /* === SECTION STAGE === */
   .stage-section {
     padding-top: 5rem;
     padding-bottom: 6rem;
   }
-
+ 
   /* Titre : même style que heroAbout — script + bold */
   .stage-title {
     color: var(--color-green);
@@ -66,19 +104,19 @@ import photoMentions from '../assets/photo_mentions.svg';
     line-height: 1.1;
     margin-bottom: 3.5rem;
   }
-
+ 
   .stage-title-script {
     font-family: 'Edwardian Script', cursive;
     font-weight: normal;
     font-size: clamp(4rem, 8vw, 8rem);
   }
-
+ 
   .stage-title-bold {
     font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: clamp(2.5rem, 5.5vw, 5.5rem);
   }
-
+ 
   /* Grille 2 colonnes */
   .stage-grid {
     display: grid;
@@ -86,21 +124,21 @@ import photoMentions from '../assets/photo_mentions.svg';
     gap: 3rem;
     align-items: center;
   }
-
+ 
   @media (min-width: 768px) {
     .stage-grid {
       grid-template-columns: 1fr 1fr;
       gap: 5rem;
     }
   }
-
+ 
   /* Colonne gauche */
   .stage-left {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
-
+ 
   .stage-desc {
     font-family: Helvetica, Arial, sans-serif;
     font-size: clamp(1rem, 1.8vw, 1.2rem);
@@ -109,7 +147,7 @@ import photoMentions from '../assets/photo_mentions.svg';
     line-height: 1.45;
     margin: 0;
   }
-
+ 
   .stage-label {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 0.9rem;
@@ -118,7 +156,7 @@ import photoMentions from '../assets/photo_mentions.svg';
     opacity: 0.7;
     margin: 0;
   }
-
+ 
   .stage-dates {
     font-family: Helvetica, Arial, sans-serif;
     font-size: clamp(2rem, 4vw, 3.5rem);
@@ -126,7 +164,7 @@ import photoMentions from '../assets/photo_mentions.svg';
     margin: 0;
     line-height: 1.2;
   }
-
+ 
   .stage-divider {
     width: 60%;
     height: 1px;
@@ -134,14 +172,14 @@ import photoMentions from '../assets/photo_mentions.svg';
     opacity: 0.3;
     margin-top: 0.5rem;
   }
-
+ 
   /* Colonne droite : photo */
   .stage-right {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-
+ 
   .stage-photo {
     width: 100%;
     max-width: 520px;
@@ -152,25 +190,25 @@ import photoMentions from '../assets/photo_mentions.svg';
     transform: translateY(10px);
     transition: opacity 1s ease, filter 1.2s ease, transform 1s ease;
   }
-
+ 
   .stage-photo.is-visible {
     opacity: 1;
     filter: blur(0px);
     transform: translateY(0);
   }
 </style>
-
+ 
 <script>
   const cursor = document.getElementById('cursor');
   const dot = document.getElementById('cursor-dot');
   let cx = 0, cy = 0, tx = 0, ty = 0;
-
+ 
   document.addEventListener('mousemove', (e) => {
     tx = e.clientX; ty = e.clientY;
     dot.style.left = tx + 'px';
     dot.style.top = ty + 'px';
   });
-
+ 
   (function animCursor() {
     cx += (tx - cx) * 0.12;
     cy += (ty - cy) * 0.12;
@@ -178,15 +216,15 @@ import photoMentions from '../assets/photo_mentions.svg';
     cursor.style.top = cy + 'px';
     requestAnimationFrame(animCursor);
   })();
-
+ 
   document.querySelectorAll('a, button').forEach(el => {
     el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
     el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
   });
-
+ 
   /* Photo reveal — même logique que heroAbout */
   const stagePhoto = document.getElementById('stagePhoto') as HTMLImageElement | null;
-
+ 
   if (stagePhoto) {
     const obs = new IntersectionObserver(
       (entries) => {

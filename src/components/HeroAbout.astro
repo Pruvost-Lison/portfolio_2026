@@ -63,20 +63,20 @@ import intropicture from '../assets/Photo_landing_page.png';
     <div class="bio-grid">
       <div class="bio-left">
         <h2 class="bio-greeting" data-word-reveal>
-          Salut, moi c'est Lison Pruvost mais vous me retrouver sous le nom de <span class="bio-name" data-keep>{bioTitle}</span> dans mes design je suis étudiante de MMI en filière création numérique
+          Salut, moi c'est Lison mais vous me retrouver sous le nom de <span class="bio-name" data-keep>{bioTitle}</span> dans mes design je suis étudiante de MMI en filière création numérique
         </h2>
         <a href="/a-propos" class="btn-voir-plus">Voir plus</a>
       </div>
       <div class="bio-right">
         <div class="bio-text" data-word-reveal>
-          <p>{bioContent} Je suis en 2eme année de BUT MMI à Montbéliard. J'adore la création numérique sous toutes ses formes : le design, le web, la vidéo, l'important pour moi, c'est que ça ait du sens et que ça se ressente.</p>
-          <br/>
-          <p>J'aime construire des projets qui ne se contentent pas d'être beaux mais qu'ils soient utiles, et bien pensés.</p>
-          <br/>
-          <p>Curieuse de nature, je touche un peu à tout et j'adore apprendre et continuer à évoluer dans le front-end et l'UI/UX, tout en gardant mon côté créatif et expérimental.</p>
-          <br/>
-          <p>Vous retrouver sur le site un échantillon de mes meilleurs projets. Merci d'avoir consulter mon portefolio, j'espère qu'il vous plairas.</p>
-        </div>
+          <p>{bioContent} Je suis en 3e année de BUT MMI à Montbéliard et j'explore la création visuelle sous différentes formes : design graphique, branding, image, vidéo ou encore motion design.</p>
+<br/>
+<p>J'aime expérimenter, mélanger les approches et explorer de nouvelles idées. Pour moi, un projet ne se limite pas à son esthétique : il doit avoir une intention, une identité et raconter quelque chose.</p>
+<br/>
+<p>Curieuse et touche-à-tout, j'aime passer d'un univers à l'autre, découvrir de nouvelles techniques et faire évoluer ma pratique au fil des projets.</p>
+<br/>
+<p>Vous trouverez ici une sélection de mes réalisations. Bonne découverte !</p>
+ </div>
       </div>
     </div>
 
@@ -127,10 +127,9 @@ import intropicture from '../assets/Photo_landing_page.png';
   }
 
   .banner-bottom {
-    top: 15%;
-    transform: rotate(8deg);
-    transform-origin: center;
-  }
+  top: 13%;                 /* même hauteur → croisement exactement au milieu */
+  transform-origin: center;
+}
 
   .scrolling-banner-pink {
     background-color: var(--color-pink);

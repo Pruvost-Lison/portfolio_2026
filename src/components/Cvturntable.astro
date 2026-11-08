@@ -1,0 +1,1094 @@
+---
+// src/components/CvTurntable.astro
+// Platine vinyle interactive : on glisse le disque sur la platine → le CV se télécharge.
+interface Props {
+  cvHref?: string;      // chemin du PDF (dans /public)
+  cvFilename?: string;  // nom du fichier téléchargé
+  audioSrc?: string;    // optionnel : un mp3 dans /public. Sinon, musique lo-fi générée dans le navigateur.
+}
+const {
+  cvHref = '/CV_Lison_Pruvost.pdf',
+  cvFilename = 'CV_Lison_Pruvost.pdf',
+  audioSrc = '',
+} = Astro.props;
+---
+
+<section
+  class="cv-deck"
+  data-cv-deck
+  data-href={cvHref}
+  data-filename={cvFilename}
+  data-audio={audioSrc}
+>
+  <!-- Mini écran LCD -->
+  <div class="lcd" aria-live="polite">
+    <div class="lcd-top">
+      <span data-lcd-title>CV · LISON PRUVOST</span>
+      <button type="button" class="lcd-mute" data-mute aria-pressed="true" aria-label="Couper le son">♪ ON</button>
+    </div>
+    <div class="lcd-msg" data-lcd-msg>INSERT RECORD</div>
+    <div class="lcd-bar"><i data-lcd-fill></i></div>
+  </div>
+
+  <div class="viewport" data-viewport>
+    <div class="scene" data-scene>
+
+      <div class="deck-shadow"></div>
+      <div class="deck-side"></div>
+
+      <!-- Plateau de la platine (plan incliné) -->
+      <div class="deck-top">
+        <div class="plinth"></div>
+        <i class="screw" style="left:14px;top:14px"></i>
+        <i class="screw" style="left:14px;bottom:14px"></i>
+
+        <div class="platter" data-platter><div class="platter-mat"></div></div>
+
+        <div class="arm-base"></div>
+        <div class="arm-rest"></div>
+
+        <div class="knob"><i></i></div>
+        <div class="led"></div>
+        <div class="pbtn" style="left:345px"><span>33</span></div>
+        <div class="pbtn" style="left:385px"><span>45</span></div>
+        <div class="pitch"><i></i></div>
+      </div>
+
+      <!-- Pochette -->
+      <div class="sleeve">
+        <span class="sleeve-main">LISON PRUVOST</span>
+        <span class="sleeve-sub">CURRICULUM VITAE — 2026</span>
+      </div>
+
+      <!-- Le vinyle -->
+      <div class="rec" data-rec>
+        <div class="rec-shadow"></div>
+        <div class="rec-lift">
+          <div class="rec-tilt">
+            <div class="rec-disc" data-disc>
+              <div class="rec-label"><span>LISON<br />PRUVOST</span><em>CV · 2026</em></div>
+            </div>
+            <div class="rec-sheen"></div>
+            <div class="rec-spindle"></div>
+          </div>
+        </div>
+        <div
+          class="rec-hit"
+          data-hit
+          role="button"
+          tabindex="0"
+          aria-label="Vinyle du CV : glisse-le sur la platine, ou appuie sur Entrée, pour télécharger le CV"
+        ></div>
+      </div>
+
+      <!-- Bras de lecture (au-dessus du disque) -->
+      <div class="arm-layer">
+        <div class="arm-fx">
+          <div class="arm">
+            <div class="arm-weight"></div>
+            <div class="arm-bar"></div>
+            <div class="arm-head"></div>
+            <div class="arm-hub"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="cv-hint">
+    Glisse (ou touche) le disque sur la platine pour télécharger mon CV.<br />
+    <a href={cvHref} download={cvFilename}>Ou télécharge-le directement (PDF)</a>
+  </p>
+</section>
+
+<style>
+  .cv-deck {
+    --green: #b8f000;
+    --pink: var(--color-pink, #fb0373);
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    font-family: Helvetica, Arial, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ───────── LCD ───────── */
+  .lcd {
+    max-width: 440px;
+    margin: 0 auto 1.4rem;
+    padding: 0.7rem 0.95rem 0.8rem;
+    background: #0c1205;
+    border: 1px solid #2c3a10;
+    border-radius: 10px;
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), 0 6px 18px rgba(0, 0, 0, 0.12);
+    font-family: 'Courier New', ui-monospace, monospace;
+    color: var(--green);
+    text-shadow: 0 0 6px rgba(184, 240, 0, 0.55);
+    position: relative;
+    overflow: hidden;
+  }
+  .lcd::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+  }
+  .lcd-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    opacity: 0.75;
+  }
+  .lcd-mute {
+    all: unset;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    border: 1px solid rgba(184, 240, 0, 0.45);
+    border-radius: 3px;
+    padding: 0.1rem 0.45rem;
+    position: relative;
+    z-index: 2;
+  }
+  .lcd-mute:hover { background: rgba(184, 240, 0, 0.14); }
+  .lcd-mute:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
+  .lcd-msg {
+    margin: 0.55rem 0 0.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    min-height: 1.4em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .is-loading .lcd-msg::after {
+    content: '_';
+    animation: blink 0.9s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .lcd-bar {
+    height: 10px;
+    border: 1px solid rgba(184, 240, 0, 0.5);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .lcd-bar i {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: repeating-linear-gradient(90deg, var(--green) 0 6px, transparent 6px 8px);
+  }
+
+  /* ───────── SCÈNE ───────── */
+  .viewport { position: relative; width: 100%; }
+  .scene {
+    --deck-x: 0px;
+    --deck-y: 20px;
+    --sx: 575px;  /* position de la pochette */
+    --sy: 50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 920px;
+    height: 320px;
+    transform-origin: 0 0;
+  }
+  .is-stacked .scene {
+    --deck-x: 10px;
+    --sx: 100px;
+    --sy: 310px;
+    width: 540px;
+    height: 570px;
+  }
+
+  /* Plateau : un plan 520×400 incliné de 55° (projection orthographique) */
+  .deck-top,
+  .arm-layer {
+    position: absolute;
+    left: var(--deck-x);
+    top: calc(var(--deck-y) - 85px);
+    width: 520px;
+    height: 400px;
+    transform: rotateX(55deg);
+  }
+  .deck-top { z-index: 1; }
+  .arm-layer { z-index: 4; pointer-events: none; }
+
+  .deck-shadow {
+    position: absolute;
+    left: calc(var(--deck-x) - 14px);
+    top: calc(var(--deck-y) + 236px);
+    width: 548px;
+    height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0));
+  }
+  .deck-side {
+    position: absolute;
+    left: var(--deck-x);
+    top: calc(var(--deck-y) + 224px);
+    width: 520px;
+    height: 32px;
+    border-radius: 0 0 12px 12px / 0 0 8px 8px;
+    background: linear-gradient(#171717, #050505);
+    box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.04);
+    z-index: 0;
+  }
+  /* Liseré vert supprimé */
+  .plinth {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(150deg, #262626 0%, #121212 55%, #0a0a0a 100%);
+    border: 1px solid #333;
+  }
+  .screw {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #aaa, #444);
+  }
+
+  .platter {
+    position: absolute;
+    left: 40px;
+    top: 65px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #34362f 0 62%, #1f201c 63% 100%);
+    box-shadow: inset 0 0 0 6px #3b3d37, 0 0 0 9px #090909;
+    will-change: transform;
+  }
+  .platter::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: repeating-conic-gradient(#a8a8a0 0 1.4deg, transparent 1.4deg 3.2deg);
+    -webkit-mask: radial-gradient(circle, transparent 91%, #000 92%, #000 97%, transparent 98%);
+    mask: radial-gradient(circle, transparent 91%, #000 92%, #000 97%, transparent 98%);
+    opacity: 0.55;
+  }
+  .platter-mat {
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #0b0b0b, #1a1a1a);
+  }
+
+  .arm-base {
+    position: absolute;
+    left: 398px;
+    top: 38px;
+    width: 84px;
+    height: 84px; /* centre toujours en 440 / 80 */
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #4a4a4a, #151515 70%);
+    box-shadow: 0 0 0 3px #0a0a0a, 0 0 0 4px rgba(184, 240, 0, 0.35);
+  }
+  .arm-rest {
+    position: absolute;
+    left: 424px;
+    top: 334px;
+    width: 32px;
+    height: 42px;
+    border-radius: 7px;
+    background: linear-gradient(#3a3a3a, #161616);
+    box-shadow: 0 0 0 2px #0a0a0a;
+  }
+  .knob {
+    position: absolute;
+    left: 30px;
+    top: 28px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #555, #151515 72%);
+    box-shadow: 0 0 0 3px #0a0a0a;
+  }
+  .knob i {
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    width: 3px;
+    height: 12px;
+    margin-left: -1.5px;
+    background: var(--green);
+    border-radius: 2px;
+    transform: rotate(-35deg);
+    transform-origin: 50% 16px;
+  }
+  .led {
+    position: absolute;
+    left: 92px;
+    top: 44px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2d3a0c;
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .is-playing .led {
+    background: var(--green);
+    box-shadow: 0 0 10px 2px rgba(184, 240, 0, 0.8);
+  }
+  .pbtn {
+    position: absolute;
+    top: 335px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #444, #151515 75%);
+    box-shadow: 0 0 0 2px #0a0a0a;
+    display: grid;
+    place-items: center;
+    color: #9a9a92;
+    font: 700 10px Helvetica, Arial, sans-serif;
+  }
+  .pitch {
+    position: absolute;
+    left: 488px;
+    top: 150px;
+    width: 14px;
+    height: 190px;
+    border-radius: 7px;
+    background: #050505;
+    box-shadow: inset 0 0 0 1px #2c2c2c;
+  }
+  .pitch i {
+    position: absolute;
+    left: -5px;
+    top: 90px;
+    width: 24px;
+    height: 12px;
+    border-radius: 3px;
+    background: linear-gradient(#bdbdb6, #6b6b66);
+  }
+
+  /* ───────── TONEARM (plus massif) ───────── */
+  .arm-fx {
+    position: absolute;
+    inset: 0;
+    filter: drop-shadow(10px 16px 7px rgba(0, 0, 0, 0.3));
+    transition: filter 1.4s ease;
+  }
+  .is-arm-down .arm-fx { filter: drop-shadow(3px 5px 3px rgba(0, 0, 0, 0.5)); }
+  .arm {
+    position: absolute;
+    left: 440px;
+    top: 80px;
+    width: 0;
+    height: 0;
+    transform: rotate(90deg);
+    transition: transform 1.5s cubic-bezier(0.55, 0, 0.25, 1);
+  }
+  .is-arm-down .arm { transform: rotate(126.7deg); }
+  .is-arm-playing .arm { transform: rotate(133deg); transition: transform 3.6s linear; }
+  .arm-bar {
+    position: absolute;
+    left: 0;
+    top: -7px;
+    width: 268px;
+    height: 14px;
+    border-radius: 7px;
+    background: linear-gradient(#f6f6f2, #8e8e88);
+    box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.25);
+  }
+  .arm-weight {
+    position: absolute;
+    left: -78px;
+    top: -20px;
+    width: 64px;
+    height: 40px;
+    border-radius: 9px;
+    background: linear-gradient(#2b2b2b, #0d0d0d);
+    box-shadow: inset 0 0 0 1px #444;
+  }
+  .arm-head {
+    position: absolute;
+    left: 256px;
+    top: -14px;
+    width: 46px;
+    height: 28px;
+    border-radius: 4px;
+    background: #101010;
+    box-shadow: inset 0 0 0 2px var(--green);
+    transform: rotate(16deg);
+    transform-origin: 0 50%;
+  }
+  .arm-hub {
+    position: absolute;
+    left: -23px;
+    top: -23px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #fff, #8d8d88 60%, #3a3a38);
+  }
+
+  /* ───────── POCHETTE ───────── */
+  .sleeve {
+    position: absolute;
+    left: var(--sx);
+    top: var(--sy);
+    width: 340px;
+    height: 230px;
+    z-index: 1;
+    border-radius: 4px;
+    background: linear-gradient(160deg, #171717, #0a0a0a);
+    border: 1px solid #2d2d2d;
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.28);
+  }
+  .sleeve::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--green);
+  }
+  .sleeve-main {
+    position: absolute;
+    left: 16px;
+    bottom: 22px;
+    font: 900 15px Helvetica, Arial, sans-serif;
+    letter-spacing: 0.06em;
+    color: #fff;
+  }
+  .sleeve-sub {
+    position: absolute;
+    left: 16px;
+    bottom: 9px;
+    font: 500 8px Helvetica, Arial, sans-serif;
+    letter-spacing: 0.22em;
+    color: var(--green);
+  }
+
+  /* ───────── VINYLE (vert pastel, étiquette rose) ───────── */
+  .rec {
+    position: absolute;
+    left: calc(var(--sx) + 22px);
+    top: calc(var(--sy) - 48px);
+    width: 296px;
+    height: 296px;
+    z-index: 3;
+    pointer-events: none;
+    transform: translate(0px, 0px);
+  }
+  .rec.settling { transition: transform 0.62s cubic-bezier(0.2, 0.9, 0.25, 1); }
+
+  .rec-shadow {
+    position: absolute;
+    left: 4px;
+    top: 76px;
+    width: 288px;
+    height: 172px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    filter: blur(7px);
+    transition: transform 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
+  }
+  .rec.lifted .rec-shadow {
+    transform: translate(8px, 26px) scale(1.04);
+    opacity: 0.5;
+    filter: blur(15px);
+  }
+  .rec-lift { position: absolute; inset: 0; transition: transform 0.3s ease; }
+  .rec.lifted .rec-lift { transform: translateY(-16px) scale(1.035); }
+  .cv-deck:not(.touched) .rec:not(.settling) .rec-lift { animation: nudge 3.4s ease-in-out infinite; }
+  @keyframes nudge {
+    0%, 70%, 100% { translate: 0 0; }
+    80% { translate: -14px 0; }
+    90% { translate: -4px 0; }
+  }
+
+  .rec-tilt { position: absolute; inset: 0; transform: rotateX(55deg); }
+  .rec-disc {
+  --disc: var(--color-green, #9bff00);
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle,
+      transparent 0 34%, rgba(255, 255, 255, 0.35) 35% 36.5%, transparent 38% 57%,
+      rgba(255, 255, 255, 0.3) 58.5% 61%, transparent 62.5% 77%,
+      rgba(255, 255, 255, 0.28) 78.5% 81%, transparent 82.5%),
+    radial-gradient(circle at 35% 30%,
+      color-mix(in srgb, var(--disc) 80%, white),
+      var(--disc) 60%,
+      color-mix(in srgb, var(--disc) 85%, black));
+  box-shadow:
+    inset 0 0 0 4px color-mix(in srgb, var(--disc) 70%, black),
+    0 0 0 1px color-mix(in srgb, var(--disc) 60%, black);
+  will-change: transform;
+}
+
+/* Sillons */
+.rec-disc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 36%, rgba(0, 70, 0, 0.22) 36.6%, transparent 38.2%,
+    transparent 60%, rgba(0, 70, 0, 0.22) 60.6%, transparent 62.2%,
+    transparent 80%, rgba(0, 70, 0, 0.2) 80.6%, transparent 82%
+  );
+}
+
+/* Reflet marbré : il tourne avec le disque */
+.rec-disc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.3), transparent 14%,
+    rgba(255, 255, 255, 0.2) 30%, transparent 46%,
+    rgba(255, 255, 255, 0.3) 62%, transparent 78%,
+    rgba(255, 255, 255, 0.22) 92%, rgba(255, 255, 255, 0.3)
+  );
+}
+  .rec-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 34%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--pink);
+    color: #fff;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    place-items: center;
+    text-align: center;
+    padding: 12% 0;
+    box-sizing: border-box;
+    font: 800 8px/1.2 Helvetica, Arial, sans-serif;
+    letter-spacing: 0.1em;
+    z-index: 1;
+  }
+  .rec-label em {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 6.5px;
+    letter-spacing: 0.16em;
+    align-self: end;
+    margin-bottom: 2px;
+  }
+  .rec-sheen {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    background: conic-gradient(
+      from 25deg,
+      transparent 0 6%, rgba(255, 255, 255, 0.55) 11%, transparent 17%,
+      transparent 50%, rgba(255, 255, 255, 0.4) 61%, transparent 69%
+    );
+  }
+  .rec-spindle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 11px;
+    height: 11px;
+    margin: -5.5px 0 0 -5.5px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, #9a9a9a 60%, #444);
+  }
+
+  /* Zone cliquable = l'ellipse visible du disque */
+  .rec-hit {
+    position: absolute;
+    inset: 0;
+    clip-path: ellipse(50% 28.7% at 50% 50%);
+    pointer-events: auto;
+    cursor: grab;
+    touch-action: none;
+    outline: none;
+  }
+  .rec.dragging .rec-hit { cursor: grabbing; }
+  .is-busy .rec-hit { cursor: default; pointer-events: none; }
+  .rec-hit:focus-visible { background: rgba(251, 3, 115, 0.18); }
+
+  /* ───────── TEXTE ───────── */
+  .cv-hint {
+    margin: 1rem 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #555;
+  }
+  .cv-hint a {
+    color: #000;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .cv-hint a:hover { opacity: 0.6; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cv-deck:not(.touched) .rec .rec-lift { animation: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-cv-deck]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const q = <T extends HTMLElement>(s: string) => root.querySelector(s) as T;
+    const scene = q('[data-scene]');
+    const viewport = q('[data-viewport]');
+    const rec = q('[data-rec]');
+    const hit = q('[data-hit]');
+    const disc = q('[data-disc]');
+    const platter = q('[data-platter]');
+    const lcdTitle = q('[data-lcd-title]');
+    const lcdMsg = q('[data-lcd-msg]');
+    const lcdFill = q('[data-lcd-fill]');
+    const muteBtn = q('[data-mute]');
+
+    const cvHref = root.dataset.href || '/CV_Lison_Pruvost.pdf';
+    const cvName = root.dataset.filename || 'CV.pdf';
+    const audioSrc = root.dataset.audio || '';
+
+    const R = 148; // demi-taille du disque
+    let scale = 1;
+    let state: 'idle' | 'landing' | 'playing' | 'done' = 'idle';
+    let onDeck = false;
+    let offset = { x: 0, y: 0 };
+    let timers: number[] = [];
+    let raf = 0;
+    let rampRaf = 0;
+    let soundOn = true;
+
+    /* ───────────── Mise à l'échelle ───────────── */
+    function layout() {
+      root.classList.toggle('is-stacked', root.clientWidth < 700);
+      const w = scene.offsetWidth;
+      const h = scene.offsetHeight;
+      scale = Math.min(1, root.clientWidth / w);
+      scene.style.transform = `scale(${scale})`;
+      scene.style.left = Math.max(0, (viewport.clientWidth - w * scale) / 2) + 'px';
+      viewport.style.height = h * scale + 'px';
+      if (onDeck && !rec.classList.contains('dragging')) {
+        const d = deckCenter();
+        const r = restCenter();
+        setOffset(d.x - r.x, d.y - r.y);
+      }
+    }
+    new ResizeObserver(layout).observe(root);
+    layout();
+
+    /* ───────────── Géométrie ───────────── */
+    const restCenter = () => ({ x: rec.offsetLeft + R, y: rec.offsetTop + R });
+    function deckCenter() {
+      const s = scene.getBoundingClientRect();
+      const p = platter.getBoundingClientRect();
+      return {
+        x: (p.left + p.width / 2 - s.left) / scale,
+        y: (p.top + p.height / 2 - s.top) / scale,
+      };
+    }
+    function setOffset(x: number, y: number) {
+      offset = { x, y };
+      rec.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    /* ───────────── Rotation (Web Animations, vitesse variable) ───────────── */
+    const spinKF = [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }];
+    const anims = [disc, platter].map((el) => {
+      const a = el.animate(spinKF, { duration: 1820, iterations: Infinity }); // ≈ 33 tours/min
+      a.pause();
+      return a;
+    });
+    function ramp(from: number, to: number, ms: number, done?: () => void) {
+      cancelAnimationFrame(rampRaf);
+      const t0 = performance.now();
+      const step = (now: number) => {
+        const k = Math.min(1, (now - t0) / ms);
+        const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        const r = Math.max(0.001, from + (to - from) * e);
+        anims.forEach((a) => (a.playbackRate = r));
+        if (k < 1) rampRaf = requestAnimationFrame(step);
+        else done?.();
+      };
+      rampRaf = requestAnimationFrame(step);
+    }
+    function spinUp(ms: number) {
+      anims.forEach((a) => {
+        a.playbackRate = 0.02;
+        a.play();
+      });
+      ramp(0.02, 1, ms);
+    }
+    function spinDown(ms: number) {
+      ramp(1, 0.001, ms, () => anims.forEach((a) => a.pause()));
+    }
+
+    /* ───────────── Audio ───────────── */
+    let actx: AudioContext | null = null;
+    let bus: GainNode | null = null;
+    let htmlAudio: HTMLAudioElement | null = null;
+    let noiseBuf: AudioBuffer | null = null;
+
+    function ensureAudio() {
+      if (!soundOn) return;
+      if (audioSrc) {
+        if (!htmlAudio) {
+          htmlAudio = new Audio(audioSrc);
+          htmlAudio.loop = true;
+          htmlAudio.preload = 'auto';
+        }
+        return;
+      }
+      if (!actx) {
+        const AC = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AC) return;
+        actx = new AC();
+      }
+      if (actx.state === 'suspended') actx.resume();
+    }
+
+    function thump() {
+      if (!soundOn || !actx || audioSrc) return;
+      const t = actx.currentTime;
+      const o = actx.createOscillator();
+      const g = actx.createGain();
+      o.frequency.setValueAtTime(95, t);
+      o.frequency.exponentialRampToValueAtTime(38, t + 0.2);
+      g.gain.setValueAtTime(0.35, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      o.connect(g);
+      g.connect(actx.destination);
+      o.start(t);
+      o.stop(t + 0.3);
+    }
+
+    function startMusic() {
+      if (!soundOn) return;
+      if (audioSrc) {
+        if (!htmlAudio) return;
+        htmlAudio.currentTime = 0;
+        htmlAudio.volume = 0.7;
+        htmlAudio.play().catch(() => {});
+        return;
+      }
+      if (!actx) return;
+      const ctx = actx;
+      const t0 = ctx.currentTime + 0.05;
+
+      const b = ctx.createGain();
+      b.gain.setValueAtTime(0, t0);
+      b.gain.linearRampToValueAtTime(0.9, t0 + 0.5);
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 2300;
+      lp.Q.value = 0.5;
+      b.connect(lp);
+      lp.connect(ctx.destination);
+      bus = b;
+
+      if (!noiseBuf) {
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+        const d = noiseBuf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      }
+
+      // Craquements de vinyle
+      const cLen = ctx.sampleRate * 3;
+      const cBuf = ctx.createBuffer(1, cLen, ctx.sampleRate);
+      const cd = cBuf.getChannelData(0);
+      for (let i = 0; i < cLen; i++) {
+        cd[i] = (Math.random() * 2 - 1) * 0.012;
+        if (Math.random() < 0.0005) cd[i] += (Math.random() * 2 - 1) * 0.45;
+      }
+      const crackle = ctx.createBufferSource();
+      crackle.buffer = cBuf;
+      crackle.loop = true;
+      const cg = ctx.createGain();
+      cg.gain.value = 0.7;
+      crackle.connect(cg);
+      cg.connect(b);
+      crackle.start(t0);
+      crackle.stop(t0 + 14);
+
+      const note = (f: number, t: number, dur: number, vol: number, type: OscillatorType = 'sine') => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = type;
+        o.frequency.value = f;
+        o.detune.value = (Math.random() - 0.5) * 12;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g);
+        g.connect(b);
+        o.start(t);
+        o.stop(t + dur + 0.05);
+      };
+      const kick = (t: number) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.frequency.setValueAtTime(130, t);
+        o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+        g.gain.setValueAtTime(0.5, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        o.connect(g);
+        g.connect(b);
+        o.start(t);
+        o.stop(t + 0.25);
+      };
+      const noiseHit = (t: number, type: BiquadFilterType, freq: number, vol: number, dur: number) => {
+        const s = ctx.createBufferSource();
+        s.buffer = noiseBuf!;
+        const f = ctx.createBiquadFilter();
+        f.type = type;
+        f.frequency.value = freq;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        s.connect(f);
+        f.connect(g);
+        g.connect(b);
+        s.start(t, Math.random() * 0.5);
+        s.stop(t + dur + 0.02);
+      };
+
+      // Fmaj7 · Em7 · Dm7 · Cmaj7 — lo-fi 76 bpm
+      const chords = [
+        [174.61, 220.0, 261.63, 329.63],
+        [164.81, 196.0, 246.94, 293.66],
+        [146.83, 174.61, 220.0, 261.63],
+        [130.81, 164.81, 196.0, 246.94],
+      ];
+      const beat = 60 / 76;
+      const pattern = [0, 1, 2, 3, 2, 1, 2, 1];
+      chords.forEach((c, bar) => {
+        const bt = t0 + bar * beat * 4;
+        c.forEach((f, i) => {
+          note(f, bt + i * 0.04, beat * 3.8, 0.075);
+          note(f * 2, bt + i * 0.04, beat * 1.4, 0.018);
+        });
+        note(c[0] / 2, bt, beat * 1.8, 0.16);
+        note(c[0] / 2, bt + beat * 2.5, beat * 1.2, 0.12);
+        for (let i = 0; i < 8; i++) {
+          const t = bt + (i * beat) / 2 + (i % 2 ? beat * 0.07 : 0);
+          if (i % 2 === 0 || Math.random() > 0.45) note(c[pattern[i]] * 2, t, beat * 0.9, 0.04, 'triangle');
+          if (i % 2) noiseHit(t, 'highpass', 6500, 0.05, 0.05);
+        }
+        kick(bt);
+        kick(bt + beat * 2);
+        noiseHit(bt + beat, 'bandpass', 1800, 0.12, 0.16);
+        noiseHit(bt + beat * 3, 'bandpass', 1800, 0.12, 0.16);
+      });
+    }
+
+    function stopMusic(fadeMs = 1200) {
+      if (htmlAudio) {
+        const a = htmlAudio;
+        const start = a.volume;
+        const t0 = performance.now();
+        const iv = window.setInterval(() => {
+          const k = Math.min(1, (performance.now() - t0) / fadeMs);
+          a.volume = Math.max(0, start * (1 - k));
+          if (k >= 1) {
+            clearInterval(iv);
+            a.pause();
+          }
+        }, 40);
+      }
+      if (bus && actx) {
+        const b = bus;
+        const t = actx.currentTime;
+        b.gain.cancelScheduledValues(t);
+        b.gain.setValueAtTime(b.gain.value, t);
+        b.gain.linearRampToValueAtTime(0, t + fadeMs / 1000);
+        window.setTimeout(() => b.disconnect(), fadeMs + 150);
+        bus = null;
+      }
+    }
+
+    muteBtn.addEventListener('click', () => {
+      soundOn = !soundOn;
+      muteBtn.textContent = soundOn ? '♪ ON' : '♪ OFF';
+      muteBtn.setAttribute('aria-pressed', String(soundOn));
+      muteBtn.setAttribute('aria-label', soundOn ? 'Couper le son' : 'Activer le son');
+      if (soundOn) ensureAudio();
+      else stopMusic(200);
+    });
+
+    /* ───────────── LCD ───────────── */
+    const setMsg = (t: string) => (lcdMsg.textContent = t);
+    const setBar = (p: number) => (lcdFill.style.width = p * 100 + '%');
+    function lcdIdle() {
+      lcdTitle.textContent = 'CV · LISON PRUVOST';
+      setMsg('INSERT RECORD');
+      setBar(0);
+      root.classList.remove('is-loading');
+    }
+
+    function triggerDownload() {
+      const a = document.createElement('a');
+      a.href = cvHref;
+      a.download = cvName;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    /* ───────────── Séquence ───────────── */
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+
+    function loadProgress(dur: number) {
+      const t0 = performance.now();
+      root.classList.add('is-loading');
+      lcdTitle.textContent = 'NOW LOADING';
+      const step = (now: number) => {
+        const k = Math.min(1, (now - t0) / dur);
+        setBar(k);
+        setMsg(`LOADING YOUR CV... ${Math.round(k * 100)}%`);
+        if (k < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }
+
+    function startSequence() {
+      state = 'playing';
+      root.classList.add('is-playing', 'is-busy');
+      lcdTitle.textContent = 'STANDBY';
+      setMsg('SPINNING UP...');
+      spinUp(1600);
+
+      later(900, () => {
+        root.classList.add('is-arm-down');
+        setMsg('LOWERING TONEARM...');
+      });
+      later(2400, () => {
+        root.classList.add('is-arm-playing');
+        thump();
+        startMusic();
+        loadProgress(3400);
+      });
+      later(5850, () => {
+        root.classList.remove('is-loading');
+        lcdTitle.textContent = 'COMPLETE';
+        setMsg('CV READY · DOWNLOAD STARTED');
+        triggerDownload();
+      });
+      later(9500, () => stopMusic(1500));
+      later(10000, () => {
+        root.classList.remove('is-arm-down', 'is-arm-playing');
+        setMsg('TONEARM RETURNING...');
+      });
+      later(10500, () => spinDown(2200));
+      later(12900, () => {
+        state = 'done';
+        root.classList.remove('is-playing', 'is-busy');
+        lcdTitle.textContent = 'CV · LISON PRUVOST';
+        setMsg('DRAG THE RECORD TO REPLAY');
+        setBar(0);
+      });
+    }
+
+    function resetVisuals() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(rampRaf);
+      anims.forEach((a) => a.pause());
+      stopMusic(150);
+      root.classList.remove('is-playing', 'is-busy', 'is-arm-down', 'is-arm-playing', 'is-loading');
+      lcdIdle();
+      state = 'idle';
+    }
+
+    function land() {
+      state = 'landing';
+      onDeck = true;
+      root.classList.add('is-busy', 'touched');
+      rec.classList.remove('dragging', 'lifted');
+      rec.classList.add('settling');
+      const d = deckCenter();
+      const r = restCenter();
+      setOffset(d.x - r.x, d.y - r.y);
+      lcdTitle.textContent = 'DISC DETECTED';
+      setMsg('POSITIONING...');
+      later(650, startSequence);
+    }
+
+    function goHome() {
+      onDeck = false;
+      rec.classList.remove('dragging', 'lifted');
+      rec.classList.add('settling');
+      setOffset(0, 0);
+    }
+
+    /* ───────────── Drag & drop ───────────── */
+    let drag: null | { cx: number; cy: number; ox: number; oy: number; moved: number } = null;
+
+    hit.addEventListener('pointerdown', (e) => {
+      if (state !== 'idle' && state !== 'done') return;
+      ensureAudio();
+      root.classList.add('touched');
+      if (state === 'done') resetVisuals();
+      hit.setPointerCapture(e.pointerId);
+      drag = { cx: e.clientX, cy: e.clientY, ox: offset.x, oy: offset.y, moved: 0 };
+      rec.classList.remove('settling');
+      rec.classList.add('dragging', 'lifted');
+      e.preventDefault();
+    });
+
+    hit.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const dx = (e.clientX - drag.cx) / scale;
+      const dy = (e.clientY - drag.cy) / scale;
+      drag.moved = Math.max(drag.moved, Math.hypot(dx, dy));
+      const r = restCenter();
+      const cx = Math.min(scene.offsetWidth, Math.max(0, r.x + drag.ox + dx));
+      const cy = Math.min(scene.offsetHeight, Math.max(0, r.y + drag.oy + dy));
+      setOffset(cx - r.x, cy - r.y);
+    });
+
+    function endDrag() {
+      if (!drag) return;
+      const moved = drag.moved;
+      drag = null;
+      const r = restCenter();
+      const d = deckCenter();
+      const dist = Math.hypot(r.x + offset.x - d.x, r.y + offset.y - d.y);
+      if (moved < 8 || dist < 130) land();
+      else goHome();
+    }
+    hit.addEventListener('pointerup', endDrag);
+    hit.addEventListener('pointercancel', () => {
+      if (!drag) return;
+      drag = null;
+      goHome();
+    });
+
+    hit.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (state !== 'idle' && state !== 'done') return;
+      e.preventDefault();
+      ensureAudio();
+      if (state === 'done') resetVisuals();
+      land();
+    });
+  }
+</script>

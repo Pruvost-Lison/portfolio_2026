@@ -1,7 +1,13 @@
 ---
 // src/pages/projets/index.astro
+import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import headerVideo from '../../assets/header_projets.mp4';
+import { projets } from '../../data/projets';
+import { getImage } from '../../data/images';
+
+// Filtres générés à partir des données (ordre d'apparition)
+const filtres = [...new Set(projets.flatMap((p) => p.filtres))];
 ---
 
 <Layout title="Projets — Lison Pruvost">
@@ -23,14 +29,47 @@ import headerVideo from '../../assets/header_projets.mp4';
 
   <section class="projets-body">
     <div class="filtres-wrap">
-      <button class="filtre-btn" data-filter="all">Tous</button>
-      <div id="filtres-dynamiques" class="filtres-dynamic"></div>
+      <button class="filtre-btn active" data-filter="all">Tous</button>
+      <div class="filtres-dynamic">
+        {filtres.map((f) => (
+          <button class="filtre-btn" data-filter={f}>{f}</button>
+        ))}
+      </div>
     </div>
     <div class="projets-meta">
-      <span id="projets-count" class="projets-count">— projets</span>
+      <span id="projets-count" class="projets-count">{projets.length} projet{projets.length > 1 ? 's' : ''}</span>
     </div>
+
     <div class="projets-grid" id="projets-grid">
-      <div class="projets-loading">Chargement…</div>
+      {projets.map((p, i) => (
+        <a
+          href={`/projets/${p.slug}`}
+          class="projet-card"
+          data-filtres={JSON.stringify(p.filtres)}
+          style={`animation-delay: ${i * 0.06}s`}
+        >
+          <Image
+            src={getImage(p.photo)}
+            alt={p.nom}
+            widths={[600, 900, 1200]}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            loading="lazy"
+          />
+          <div class="projet-card-overlay"></div>
+          <div class="projet-card-infos">
+            <div class="projet-card-top">
+              <span class="projet-card-nom">{p.nom}</span>
+              <span class="projet-card-voir">Voir plus</span>
+            </div>
+            <div class="projet-card-comps">
+              {p.competencesCarte.map((c) => (
+                <span class="projet-card-comp">{c}</span>
+              ))}
+            </div>
+          </div>
+        </a>
+      ))}
+      <p class="projets-empty" id="projets-empty" hidden>Aucun projet dans cette catégorie.</p>
     </div>
   </section>
 
@@ -155,13 +194,16 @@ import headerVideo from '../../assets/header_projets.mp4';
     grid-template-columns: 1fr 1fr;
     gap: 1.2rem;
   }
-  .projets-loading {
+  .projets-empty {
     grid-column: 1 / -1;
     font-family: Helvetica, Arial, sans-serif;
     font-size: 0.85rem;
     color: #999;
     padding: 3rem 0;
+    margin: 0;
   }
+  .projets-empty[hidden] { display: none; }
+
   .projet-card {
     position: relative;
     overflow: hidden;
@@ -172,6 +214,7 @@ import headerVideo from '../../assets/header_projets.mp4';
     display: block;
     animation: cardIn 0.45s ease both;
   }
+  .projet-card.is-hidden { display: none; }
   @keyframes cardIn {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -248,8 +291,7 @@ import headerVideo from '../../assets/header_projets.mp4';
 </style>
 
 <script>
-  const PB_URL = 'http://127.0.0.1:8090';
-
+  // ── Curseur ──
   const cursor = document.getElementById('cursor') as HTMLElement;
   const dot = document.getElementById('cursor-dot') as HTMLElement;
   let cx = 0, cy = 0, tx = 0, ty = 0;
@@ -267,117 +309,33 @@ import headerVideo from '../../assets/header_projets.mp4';
     requestAnimationFrame(animCursor);
   })();
 
-  let allProjets: any[] = [];
-  let filtreActif = 'all';
+  // ── Filtres (les cartes sont déjà dans le HTML, on les affiche/masque) ──
+  const buttons = document.querySelectorAll<HTMLElement>('.filtre-btn');
+  const cards = document.querySelectorAll<HTMLElement>('.projet-card');
+  const countEl = document.getElementById('projets-count')!;
+  const emptyEl = document.getElementById('projets-empty')!;
 
-  async function loadProjets() {
-    try {
-      const res = await fetch(`${PB_URL}/api/collections/projet/records?perPage=100&sort=-created`);
-      const data = await res.json();
-      allProjets = data.items || [];
-      buildFiltres();
-      renderProjets();
-    } catch (err) {
-      console.error('Erreur:', err);
-      const grid = document.getElementById('projets-grid')!;
-      grid.innerHTML = '<p style="color:#999;font-size:0.85rem;font-family:Helvetica,sans-serif;grid-column:1/-1">Erreur de chargement.</p>';
-    }
-  }
-
-  function buildFiltres() {
-    const allFiltres = new Set<string>();
-    allProjets.forEach(p => {
-      const filtres = Array.isArray(p.filtre_projet)
-        ? p.filtre_projet
-        : (p.filtre_projet || '').split(',').map((f: string) => f.trim()).filter(Boolean);
-      filtres.forEach((f: string) => { if (f) allFiltres.add(f); });
-    });
-
-    const container = document.getElementById('filtres-dynamiques')!;
-    container.innerHTML = '';
-
-    allFiltres.forEach(filtre => {
-      const btn = document.createElement('button');
-      // Marque actif si c'est le filtre URL
-      btn.className = 'filtre-btn' + (filtre === filtreActif ? ' active' : '');
-      btn.dataset.filter = filtre;
-      btn.textContent = filtre;
-      btn.addEventListener('click', () => setFiltre(filtre));
-      container.appendChild(btn);
-    });
-
-    // Bouton Tous
-    const tousBtn = document.querySelector('[data-filter="all"]') as HTMLElement;
-    if (tousBtn) {
-      tousBtn.classList.toggle('active', filtreActif === 'all');
-      tousBtn.addEventListener('click', () => setFiltre('all'));
-    }
-  }
+  cards.forEach((card) => {
+    card.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    card.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
 
   function setFiltre(filtre: string) {
-    filtreActif = filtre;
-    document.querySelectorAll('.filtre-btn').forEach(btn => {
-      btn.classList.toggle('active', (btn as HTMLElement).dataset.filter === filtre);
+    let visible = 0;
+    cards.forEach((card) => {
+      const filtres: string[] = JSON.parse(card.dataset.filtres || '[]');
+      const show = filtre === 'all' || filtres.includes(filtre);
+      card.classList.toggle('is-hidden', !show);
+      if (show) visible++;
     });
-    renderProjets();
+    buttons.forEach((b) => b.classList.toggle('active', b.dataset.filter === filtre));
+    countEl.textContent = `${visible} projet${visible > 1 ? 's' : ''}`;
+    emptyEl.hidden = visible > 0;
   }
 
-  function renderProjets() {
-    const grid = document.getElementById('projets-grid')!;
-    const countEl = document.getElementById('projets-count')!;
+  buttons.forEach((btn) => btn.addEventListener('click', () => setFiltre(btn.dataset.filter!)));
 
-    const filtered = filtreActif === 'all'
-      ? allProjets
-      : allProjets.filter(p => {
-          const filtres = Array.isArray(p.filtre_projet)
-            ? p.filtre_projet
-            : (p.filtre_projet || '').split(',').map((f: string) => f.trim()).filter(Boolean);
-          return filtres.includes(filtreActif);
-        });
-
-    countEl.textContent = `${filtered.length} projet${filtered.length > 1 ? 's' : ''}`;
-    grid.innerHTML = filtered.length === 0
-      ? '<p style="color:#999;font-size:0.85rem;font-family:Helvetica,sans-serif;grid-column:1/-1;padding:3rem 0">Aucun projet dans cette catégorie.</p>'
-      : filtered.map((p, i) => buildCard(p, i)).join('');
-
-    grid.querySelectorAll<HTMLElement>('.projet-card').forEach(card => {
-      card.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
-      card.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
-    });
-  }
-
-  function buildCard(p: any, i: number): string {
-    const thumb = p.photo_projet
-      ? `${PB_URL}/api/files/${p.collectionId}/${p.id}/${p.photo_projet}`
-      : '';
-    const comps: string[] = Array.isArray(p.competence_projet)
-      ? p.competence_projet
-      : (p.competence_projet || '').split(',').map((c: string) => c.trim()).filter(Boolean);
-    const href = p.lien_projet ? `/projets/${p.lien_projet}` : '#';
-
-    return `
-      <a href="${href}" class="projet-card" style="animation-delay: ${i * 0.06}s">
-        ${thumb ? `<img src="${thumb}" alt="${p.nom_projet}" loading="lazy" />` : '<div style="width:100%;height:100%;background:#ccc"></div>'}
-        <div class="projet-card-overlay"></div>
-        <div class="projet-card-infos">
-          <div class="projet-card-top">
-            <span class="projet-card-nom">${p.nom_projet}</span>
-            <span class="projet-card-voir">Voir plus</span>
-          </div>
-          <div class="projet-card-comps">
-            ${comps.map(c => `<span class="projet-card-comp">${c}</span>`).join('')}
-          </div>
-        </div>
-      </a>
-    `;
-  }
-
-  // ── Lire ?filtre= dans l'URL AVANT de charger ──
-  const params = new URLSearchParams(window.location.search);
-  const filtreUrl = params.get('filtre');
-  if (filtreUrl) {
-    filtreActif = filtreUrl;
-  }
-
-  loadProjets();
+  // ?filtre=Photographie dans l'URL
+  const filtreUrl = new URLSearchParams(window.location.search).get('filtre');
+  if (filtreUrl) setFiltre(filtreUrl);
 </script>

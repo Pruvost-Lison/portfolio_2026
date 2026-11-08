@@ -1,0 +1,276 @@
+---
+// src/components/Preloader.astro
+// Écran de chargement : méduse en trame de points (halftone) dans ton vert, avec du volume.
+// À placer UNIQUEMENT dans src/pages/index.astro → il n'apparaît que sur l'accueil.
+
+// true  = ne s'affiche qu'une fois par visite (pas quand on revient sur l'accueil)
+// false = s'affiche à chaque chargement de l'accueil
+const oncePerSession = false;
+---
+
+<div class="preloader" id="preloader" data-once={String(oncePerSession)} role="status" aria-live="polite" aria-label="Chargement">
+  <canvas class="pl-canvas" id="plCanvas" aria-hidden="true"></canvas>
+  <div class="pl-info">
+    <span class="pl-label">Chargement</span>
+    <span class="pl-count" id="plCount">0%</span>
+  </div>
+</div>
+
+<!-- Exécuté tout de suite : bloque le scroll, ou masque l'écran si déjà vu -->
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    try {
+      var el = document.getElementById('preloader');
+      if (el && el.dataset.once === 'true' && sessionStorage.getItem('pl-seen')) {
+        root.classList.add('pl-skip');
+        return;
+      }
+    } catch (e) {}
+    root.classList.add('is-preloading');
+  })();
+</script>
+
+<style is:global>
+  html.is-preloading,
+  html.is-preloading body { overflow: hidden; }
+  html.pl-skip .preloader { display: none; }
+
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+    transition: transform 0.95s cubic-bezier(0.76, 0, 0.24, 1);
+    cursor: none;
+  }
+  .preloader.is-done { transform: translateY(-100%); }
+
+  /* légère lueur autour de la méduse = plus de profondeur */
+  .pl-canvas {
+    display: block;
+    filter: drop-shadow(0 0 22px rgba(155, 255, 0, 0.22));
+  }
+
+  .pl-info {
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  .pl-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .pl-count {
+    min-width: 3.4ch;
+    text-align: right;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-green, #9bff00);
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const el = document.getElementById('preloader');
+  const canvas = document.getElementById('plCanvas') as HTMLCanvasElement | null;
+  const countEl = document.getElementById('plCount');
+
+  if (el && canvas && countEl && !root.classList.contains('pl-skip')) run(el, canvas, countEl);
+
+  function run(el: HTMLElement, canvas: HTMLCanvasElement, countEl: HTMLElement) {
+    const ctx = canvas.getContext('2d')!;
+    const green = getComputedStyle(root).getPropertyValue('--color-green').trim() || '#9bff00';
+
+    const MIN_MS = 2800;   // durée minimale d'affichage
+    const MAX_MS = 9000;   // sécurité : on ouvre le site quoi qu'il arrive
+    const LEVELS = 6;      // nombre de tailles de points (plus = dégradés plus doux)
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let W = 0, H = 0, dpr = 1, cell = 8;
+
+    function resize() {
+      const h = Math.min(window.innerHeight * 0.6, 560);
+      const w = h * 0.8;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      W = w;
+      H = h;
+      cell = Math.max(5, Math.round(h / 70)); // finesse de la trame
+    }
+    resize();
+    addEventListener('resize', resize);
+
+    const sm = (a: number, b: number, x: number) => {
+      const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+      return t * t * (3 - 2 * t);
+    };
+    const hash = (n: number) => {
+      const s = Math.sin(n * 91.7) * 43758.5453;
+      return s - Math.floor(s);
+    };
+
+    /* ── La méduse : intensité 0 → 1 en chaque point, avec éclairage 3D ── */
+    function field(x: number, y: number, t: number): number {
+      const p = Math.sin(t * 2.1);                 // pulsation
+      y -= Math.sin(t * 1.1) * 0.03;               // légère flottaison
+
+      // Lumière qui tourne doucement (haut-gauche, devant) → le relief bouge
+      let Lx = -0.5 + 0.28 * Math.sin(t * 0.7);
+      let Ly = -0.55;
+      let Lz = 0.67;
+      const Ll = Math.hypot(Lx, Ly, Lz);
+      Lx /= Ll; Ly /= Ll; Lz /= Ll;
+
+      const cy = -0.45;
+      const rx = 0.52 * (1 + 0.09 * p);
+      const ry = 0.38 * (1 - 0.07 * p);
+      const edgeY = cy + ry * 0.22;                // bord inférieur de l'ombrelle
+      let v = 0;
+
+      /* Ombrelle : un dôme éclairé (ombre, lumière, bord translucide) */
+      {
+        const dx = x / rx;
+        const dy = (y - cy) / ry;
+        const d2 = dx * dx + dy * dy;
+        const d = Math.sqrt(d2);
+        const edge = edgeY + 0.025 * Math.sin(x * 16 - t * 3);
+
+        // halo translucide autour du dôme (points clairsemés)
+        if (y < edge + 0.06) v = Math.max(v, sm(1.4, 1.06, d) * 0.16);
+
+        if (y < edge) {
+          const cover = sm(1.06, 0.78, d) * sm(edge, edge - 0.05, y);
+          if (cover > 0) {
+            const z = Math.sqrt(Math.max(0, 1 - Math.min(1, d2)));   // hauteur du dôme
+            const diffuse = Math.max(0, dx * Lx + dy * Ly + z * Lz);  // lumière sur la surface
+            const rimLight = Math.pow(1 - z, 2.2);                    // bord plus lumineux
+            let b = 0.2 + 0.5 * diffuse + 0.42 * rimLight;
+
+            // structure interne : anneau à 4 lobes (organes visibles par transparence)
+            const ang = Math.atan2(dy, dx);
+            const ring = sm(0.13, 0, Math.abs(d - 0.42 - 0.03 * p));
+            b += 0.36 * ring * (0.5 + 0.5 * Math.cos(ang * 4 + t * 0.3));
+
+            // fines nervures radiales sur la périphérie
+            b *= 1 + 0.1 * Math.sin(ang * 22) * sm(0.5, 0.8, d);
+
+            // bourrelet lumineux le long du bord
+            b += 0.4 * sm(0.05, 0, Math.abs(y - edge));
+
+            v = Math.max(v, cover * b);
+          }
+        }
+      }
+
+      /* Bras centraux : rubans cylindriques, du plus loin au plus proche */
+      for (let k = 0; k < 3; k++) {
+        const s = (y - (edgeY - 0.02)) / 0.95;
+        if (s > 0 && s < 1) {
+          const depth = [0.62, 0.82, 1.0][k];
+          const xc = (k - 1) * 0.13 + 0.08 * Math.sin(s * 7 - t * 2.2 + k * 2.1) * Math.pow(s, 0.8);
+          const halfW = 0.065 * (1 - 0.55 * s) * (1 + 0.22 * Math.sin(s * 30 - t * 2 + k));
+          const u = (x - xc) / halfW;
+          if (Math.abs(u) < 1.2) {
+            const cyl = Math.sqrt(Math.max(0, 1 - u * u));              // section ronde
+            const shade = 0.3 + 0.5 * cyl + 0.22 * -u * (cyl > 0 ? 1 : 0); // éclairé côté gauche
+            const a = sm(1.12, 0.9, Math.abs(u)) * shade * depth * Math.pow(1 - s, 0.7)
+              * (0.85 + 0.15 * Math.sin(s * 26 - t * 3));
+            v = Math.max(v, a);
+          }
+        }
+      }
+
+      /* Tentacules fins : certains devant (nets), d'autres derrière (pâles) */
+      const n = 12;
+      for (let i = 0; i < n; i++) {
+        const xi = -0.44 + (0.88 * i) / (n - 1);
+        const depth = 0.5 + 0.5 * hash(i + 1);
+        const L = 0.95 + 0.06 * ((i * 37) % 5);
+        const s = (y - edgeY) / L;
+        if (s > 0 && s < 1) {
+          const xc = xi * (1 - 0.3 * s) + 0.07 * Math.sin(s * 8 - t * 2.4 + i * 1.3) * s;
+          const w = 0.016 + 0.014 * depth;
+          const a = sm(w, 0, Math.abs(x - xc)) * Math.pow(1 - s, 0.7) * depth * 0.9
+            * (0.72 + 0.28 * Math.sin(s * 38 - t * 3 + i));            // "perles" qui descendent
+          v = Math.max(v, a);
+        }
+      }
+      return Math.min(1, v);
+    }
+
+    /* ── Dessin : trame de points, taille = intensité ── */
+    function draw(t: number, progress: number) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = green;
+      const cols = Math.ceil(W / cell);
+      const rows = Math.ceil(H / cell);
+      const half = H / 2;
+
+      ctx.beginPath();
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const px = (c + 0.5) * cell;
+          const py = (r + 0.5) * cell;
+          // la méduse apparaît de haut en bas au fil du chargement
+          const reveal = Math.min(1, Math.max(0, (progress * 1.25 - py / H) / 0.18));
+          if (reveal <= 0) continue;
+          let v = field((px - W / 2) / half, (py - half) / half, t) * reveal;
+          v = Math.round(v * LEVELS) / LEVELS;     // paliers → rendu bitmap
+          if (v <= 0) continue;
+          const rad = v * cell * 0.55;
+          ctx.moveTo(px + rad, py);
+          ctx.arc(px, py, rad, 0, Math.PI * 2);
+        }
+      }
+      ctx.fill();
+    }
+
+    /* ── Progression (réelle + durée minimale) ── */
+    let loaded = document.readyState === 'complete';
+    addEventListener('load', () => (loaded = true));
+
+    const start = performance.now();
+    let shown = 0;
+    let doneAt = 0;
+
+    function exit() {
+      el.classList.add('is-done');
+      root.classList.remove('is-preloading');
+      try { sessionStorage.setItem('pl-seen', '1'); } catch (e) {}
+      setTimeout(() => el.remove(), 1100);
+    }
+
+    function frame(now: number) {
+      if (!el.isConnected) return;
+      const elapsed = now - start;
+      const timeP = Math.min(1, elapsed / MIN_MS);
+      const target = doneAt ? 1 : Math.min(timeP, loaded ? 1 : 0.92);
+      shown += (target - shown) * 0.1;
+
+      countEl.textContent = (doneAt ? 100 : Math.min(99, Math.round(shown * 100))) + '%';
+      draw(reduce ? 0.8 : elapsed / 1000, doneAt ? 1 : shown);
+
+      if (!doneAt && ((loaded && elapsed >= MIN_MS && shown > 0.985) || elapsed > MAX_MS)) {
+        doneAt = now;
+        setTimeout(exit, 450);
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+</script>

@@ -1,403 +1,235 @@
 ---
-// src/pages/about.astro
+// src/pages/a-propos.astro
 import Layout from '../layouts/Layout.astro';
+import CvTurntable from '../components/CvTurntable.astro';
 import aboutImg from '../assets/about.png';
 import landingImg from '../assets/Photo_landing_page.png';
+import cvUrl from '../assets/CV_Lison_Pruvost.pdf?url';
 
-const { 
-  bannerText = "PROJECTS",
-  titleLine1 = "À",
-  titleLine2 = "ropos",
-  cardSvg,
-  bioTitle = "Lis",
-  bioContent = ""
-} = Astro.props;
+const cvFilename = 'CV_Lison_Pruvost.pdf';
+const cvHref = cvUrl;
 
-const repeatedText = Array(15).fill(bannerText).join(' - ') + ' - ';
+// Les mots entre *étoiles* sont surlignés en vert pendant l'animation.
+const headline = `J'imagine des univers *visuels*, je compose des *images*, je donne *forme* aux idées.`;
+const words = headline.split(' ').map((w) => {
+  const [, star, t, punct] = w.match(/^(\*?)(.+?)\*?([.,;:!?]?)$/)!;
+  return { t, punct, hl: !!star };
+});
+
+const skills = [
+  {
+    title: 'Points forts',
+    items: [
+      'Créative et sensible au détail',
+      'Bonne compréhension des besoins utilisateurs',
+      'Curieuse et polyvalente',
+      'Esprit analytique',
+      'Capacité à apprendre et à évoluer rapidement',
+    ],
+  },
+  {
+    title: 'Compétences',
+    items: [
+      'UI / UX design',
+      'Front-end (HTML, CSS, bases JavaScript)',
+      'Design graphique',
+      'Montage vidéo',
+      'Identité visuelle',
+      'Prototypage et wireframes',
+    ],
+  },
+  {
+    title: 'Outils',
+    items: [
+      'Figma',
+      'Suite Adobe (Photoshop, Illustrator, InDesign, Premiere Pro, After Effects, Audition)',
+      'VS Code (CSS, HTML, JS, Astro, Tailwind)',
+      'Suite Google / Office',
+      'Notion',
+      'DaVinci Resolve / CapCut',
+    ],
+  },
+];
+
+const timeline = [
+  { year: '2023', title: 'Bac général', desc: 'Obtention du Baccalauréat mention européenne DNL' },
+  { year: '2023 →', title: 'BUT MMI — IUT de Montbéliard', desc: 'Parcours Création Numérique. Design, développement web, audiovisuel.' },
+  {
+    year: 'S3 — 2024',
+    title: `Semestre à l'étranger : Vanier College, Montréal`,
+    desc: `Intégration dans un cégep anglophone en « Multimedia Integration ». Renforcement en design et création numérique.`,
+    hl: true,
+  },
+  {
+    year: '30 mars → 5 juin 2026',
+    title: 'Stage — Communauté de Communes du Sundgau',
+    desc: 'Service communication : affiches, brochures, vidéos et animations.',
+  },
+  { year: '2026', title: `En cours d'obtention du BUT MMI`, desc: 'En cours — diplôme prévu en juin 2027.' },
+];
 ---
 
 <Layout title="À Propos — Lison Pruvost">
+  <div class="about">
 
-  <!-- Curseur personnalisé -->
-  <div class="custom-cursor" id="cursor"></div>
-  <div class="custom-cursor-dot" id="cursor-dot"></div>
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="custom-cursor-dot" id="cursor-dot"></div>
 
-  <!-- ═══════════════════════════════════════
-       HERO — fond noir
-  ═══════════════════════════════════════ -->
-  <section class="about-hero section-dark">
-    <div class="hero-content">
-    <div class="container-custom">
-      <div class="hero-title">
-        <h1 style="line-height: 1.1; margin-bottom: 3rem; color: var(--color-green); font-weight: normal; text-align: center;">
-          <span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 9rem;">{titleLine1} </span><span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 9rem;">P</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 6rem;">{titleLine2}</span>
-        </h1>
+    <!-- HERO -->
+    <section class="sec about-hero dark">
+      <h1 class="hero-title">
+        <span class="script">À P</span><span class="sans">ropos</span>
+      </h1>
+      <div class="hero-img parallax-img">
+        <img src={aboutImg.src} alt="Lison Pruvost" />
       </div>
-    <div class="hero-img-wrap parallax-img">
-      <img src={aboutImg.src} alt="Lison Pruvost" class="hero-photo" />
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══════════════════════════════════════
-       INTRO — fond blanc
-  ═══════════════════════════════════════ -->
-  <section class="about-intro section-white">
-    <div class="intro-grid">
-      <div class="intro-left">
-        <p class="intro-text reveal-words">
-          Étudiante en BUT MMI à Montbéliard, je crée des expériences numériques qui ont du sens — à la croisée du design, du code et de la vidéo.
+    <!-- INTRO + CV -->
+    <section class="sec light">
+      <div class="intro-inner">
+        <h2 class="intro-title words" aria-label={words.map((w) => w.t).join(' ')}>
+          {words.map((w, i) => (
+            <span class="w" aria-hidden="true">
+              <span style={`--i:${i}`}><span class:list={{ hl: w.hl }}>{w.t}</span>{w.punct}</span>
+            </span>
+          ))}
+        </h2>
+        <p class="intro-sub reveal" style="--d:.5s">
+          Étudiante en BUT MMI à Montbéliard, je navigue entre design graphique, direction artistique et audiovisuel.
+          J'aime expérimenter, toucher à différents domaines et donner forme à des idées.
         </p>
-        <p class="intro-sub reveal-words">
-          Curieuse de nature, j'explore, j'apprends, je construis. Mon moteur : que chaque projet soit à la fois beau, utile et bien pensé.
-        </p>
-      </div>
-      <div class="intro-right">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-number" data-target="2">0</span>
-            <span class="stat-label">ans de formation</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number" data-target="12">0</span>
-            <span class="stat-label">projets réalisés</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number" data-target="6">0</span>
-            <span class="stat-label">outils maîtrisés</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number" data-target="1">0</span>
-            <span class="stat-label">semestre à l'étranger</span>
-          </div>
+        <div class="reveal" style="--d:.2s">
+          <CvTurntable cvHref={cvHref} cvFilename={cvFilename} />
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══════════════════════════════════════
-       COMPÉTENCES — fond noir
-  ═══════════════════════════════════════ -->
-  <section class="about-skills section-dark">
-    <div class="skills-layout">
-      <div class="skills-img-col">
-        <div class="skills-img-wrap parallax-img">
+    <!-- COMPÉTENCES -->
+    <section class="sec dark">
+      <div class="sec-in skills">
+        <div class="skills-img parallax-img">
           <img src={landingImg.src} alt="Lison Pruvost" />
         </div>
-      </div>
-      <div class="skills-content">
-        <div class="skill-block reveal-block">
-          <h3 class="skill-heading">Points forts</h3>
-          <ul class="skill-list">
-            <li>Créative et sensible au détail</li>
-            <li>Bonne compréhension des besoins utilisateurs</li>
-            <li>Curieuse et polyvalente</li>
-            <li>Esprit analytique</li>
-            <li>Capacité à apprendre et à évoluer rapidement</li>
-          </ul>
-        </div>
-        <div class="skill-block reveal-block">
-          <h3 class="skill-heading">Compétences</h3>
-          <ul class="skill-list">
-            <li>UI / UX design</li>
-            <li>Front-end (HTML, CSS, bases JavaScript)</li>
-            <li>Design graphique</li>
-            <li>Montage vidéo</li>
-            <li>Identité visuelle</li>
-            <li>Prototypage et wireframes</li>
-          </ul>
-        </div>
-        <div class="skill-block reveal-block">
-          <h3 class="skill-heading">Outils</h3>
-          <ul class="skill-list">
-            <li>Figma</li>
-            <li>Suite Adobe (Photoshop, Illustrator, Indesign, Première Pro, After Effect, Audition)</li>
-            <li>VS Code (CSS, HTML, JS, Astro, Tailwind)</li>
-            <li>Suite Google / Office</li>
-            <li>Notion</li>
-            <li>DaVinci Resolve / Capcut</li>
-          </ul>
+        <div class="skills-content">
+          {skills.map((s, i) => (
+            <div class="reveal" style={`--d:${i * 0.15}s`}>
+              <h3>{s.title}</h3>
+              <ul class="skill-list">{s.items.map((it) => <li>{it}</li>)}</ul>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══════════════════════════════════════
-       TIMELINE — fond blanc
-  ═══════════════════════════════════════ -->
-  <section class="about-timeline section-white">
-    <div class="timeline-header reveal-words">
-      <h2 class="timeline-title">
-        <span class="script-p">P</span>arcours &amp; apprentissages
-      </h2>
-    </div>
+    <!-- PARCOURS -->
+    <section class="sec light">
+      <h2 class="sec-in timeline-title reveal">Parcours &amp; apprentissages</h2>
 
-    <div class="timeline-body">
-      <div class="timeline-text reveal-words">
-        <p>
-          Actuellement en 2ᵉ année de BUT Métiers du Multimédia et de l'Internet à Montbéliard, je développe une approche globale de la création numérique, mêlant design, web et audiovisuel.
-        </p>
-        <p>
-          Dans le cadre de mon parcours, j'ai réalisé un semestre d'études dans un cégep anglophone à Montréal — <strong>Vanier College</strong> — une expérience qui m'a permis de renforcer mes compétences en design et en création, tout en évoluant dans un environnement international et en anglais.
-        </p>
-        <p>
-          Curieuse et polyvalente, j'aime explorer différents domaines et apprendre en continu. Je m'oriente particulièrement vers le front-end et l'UI/UX, avec l'envie de concevoir des projets à la fois esthétiques, utiles et porteurs de sens, tout en conservant une démarche créative et expérimentale.
-        </p>
-      </div>
+      <div class="sec-in timeline-body">
+        <div class="timeline-text reveal">
+          <p>
+            Actuellement en 3ᵉ année de BUT Métiers du Multimédia et de l’Internet à Montbéliard, je développe une approche polyvalente de la création visuelle, entre design graphique, direction artistique et audiovisuel.
+          </p>
+          <p>
+            Dans le cadre de mon parcours, j’ai réalisé un semestre d’études au <strong>Vanier College</strong>, un cégep anglophone situé à Montréal. Cette expérience m’a permis de découvrir un nouvel environnement culturel et d’enrichir ma pratique du design et de la création.
+          </p>
+          <p>
+            J’ai également effectué un stage au sein du service communication de la <strong>Communauté de Communes du Sundgau (CCS)</strong>, où j’ai participé à la réalisation de différents supports visuels : affiches, brochures, vidéos et animations. Une expérience qui m’a permis de mettre en pratique mes compétences et de mieux comprendre les enjeux de la communication visuelle en milieu professionnel.
+          </p>
+          <p>
+            Curieuse et polyvalente, j’aime explorer différents domaines, expérimenter de nouvelles approches et construire des univers visuels variés. Je m’intéresse particulièrement au design graphique, à l’image et à la vidéo, avec l’envie de continuer à développer ma créativité à travers des projets divers.
+          </p>
+        </div>
 
-      <div class="timeline-events">
-        <div class="timeline-item reveal-block">
-          <div class="tl-dot"></div>
-          <div class="tl-content">
-            <span class="tl-year">2023</span>
-            <h4 class="tl-title">Bac général</h4>
-            <p class="tl-desc">Obtention du Baccalauréat mention européenne DNL</p>
-          </div>
-        </div>
-        <div class="timeline-item reveal-block">
-          <div class="tl-dot"></div>
-          <div class="tl-content">
-            <span class="tl-year">2023 →</span>
-            <h4 class="tl-title">BUT MMI — IUT de Montbéliard</h4>
-            <p class="tl-desc">Parcours Création Numérique. Design, développement web, audiovisuel.</p>
-          </div>
-        </div>
-        <div class="timeline-item reveal-block highlight-item">
-          <div class="tl-dot tl-dot-green"></div>
-          <div class="tl-content">
-            <span class="tl-year">S3 — 2024</span>
-            <h4 class="tl-title">Semestre à l'étranger : Vanier College, Montréal</h4>
-            <p class="tl-desc">Integration dans le CGEP anglophone en "Multimedia Integration". Renforcement en design et création numérique.</p>
-          </div>
-        </div>
-        <div class="timeline-item reveal-block">
-          <div class="tl-dot"></div>
-          <div class="tl-content">
-            <span class="tl-year">2026</span>
-            <h4 class="tl-title">En cours d'obtention du BUT MMI</h4>
-            <p class="tl-desc">En cours — diplôme prévu en juin 2027.</p>
-          </div>
+        <div class="timeline-events">
+          {timeline.map((e, i) => (
+            <div class="tl-item reveal" style={`--d:${i * 0.1}s`}>
+              <i class:list={['tl-dot', { 'tl-dot-green': e.hl }]}></i>
+              <div>
+                <span class="tl-year">{e.year}</span>
+                <h4>{e.title}</h4>
+                <p>{e.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══════════════════════════════════════
-       CTA — fond noir
-  ═══════════════════════════════════════ -->
-  <section class="about-cta section-dark">
-    <div class="cta-inner">
-      <p class="cta-label reveal-words">Envie de collaborer ?</p>
-      <h2 class="cta-big reveal-words">Parlons-en.</h2>
-      <div class="cta-actions">
-        <a href="/contact" class="btn-cta-main">Me contacter</a>
-        <a href="/cv.pdf" download class="btn-cta-secondary">Télécharger le CV</a>
+    <!-- CTA -->
+    <section class="sec about-cta dark">
+      <p class="cta-label reveal">Envie de collaborer ?</p>
+      <h2 class="cta-big script reveal" style="--d:.1s">Me Contacter</h2>
+      <div class="cta-actions reveal" style="--d:.2s">
+        <a href="/contact" class="btn btn-main">Me contacter</a>
+        <a href={cvHref} download={cvFilename} class="btn btn-ghost">Télécharger le CV</a>
       </div>
-    </div>
-  </section>
+    </section>
 
+  </div>
 </Layout>
 
 <style is:global>
-  /* Curseur */
+  * { cursor: none; }
   .custom-cursor {
-    width: 36px;
-    height: 36px;
-    border: 1.5px solid var(--color-green, #b8f000);
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--color-green, #9bff00);
     border-radius: 50%;
-    position: fixed;
-    top: 0; left: 0;
-    pointer-events: none;
-    z-index: 9999;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
-    transition: transform 0.12s ease, width 0.2s ease, height 0.2s ease, background 0.2s ease;
+    transition: width 0.2s, height 0.2s, background 0.2s;
     mix-blend-mode: difference;
   }
   .custom-cursor-dot {
-    width: 5px;
-    height: 5px;
-    background: var(--color-green, #b8f000);
+    width: 5px; height: 5px;
+    background: var(--color-green, #9bff00);
     border-radius: 50%;
-    position: fixed;
-    top: 0; left: 0;
-    pointer-events: none;
-    z-index: 10000;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 10000;
     transform: translate(-50%, -50%);
   }
-  .custom-cursor.hovering {
-    width: 60px;
-    height: 60px;
-    background: rgba(184,240,0,0.1);
-  }
+  .custom-cursor.hovering { width: 60px; height: 60px; background: rgba(155, 255, 0, 0.1); }
 </style>
 
 <style>
-  /* ── BASE ── */
-  * { cursor: none; }
+  .about { --g: var(--color-green, #9bff00); font-family: Helvetica, Arial, sans-serif; }
+  .dark { background: #000; color: #fff; }
+  .light { background: #f5f5f0; color: #000; }
+  .sec { padding: 7rem 5rem; }
+  .sec-in { max-width: 1200px; margin: 0 auto; }
+  .script { font-family: 'Edwardian Script', cursive; font-weight: normal; }
+  .sans { font-weight: 900; }
 
-  .section-dark  { background: #000; color: #fff; }
-  .section-white { background: #f5f5f0; color: #000; }
+  /* ── Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition-delay: var(--d, 0s);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
 
-  /* ── HERO ── */
+  /* ── Hero ── */
   .about-hero {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
+    gap: 3rem;
     padding: 6rem 3rem 4rem;
-  }
-
-  .hero-title-wrap {
-    text-align: center;
-    z-index: 2;
-    position: relative;
-  }
-
-  .about-hero-title {
-    font-weight: normal;
-    line-height: 1;
-    margin: 0;
-    color: var(--color-green, #b8f000);
-  }
-
-  .script-a, .script-p {
-    font-family: 'Edwardian Script', cursive;
-    font-size: clamp(6rem, 14vw, 13rem);
-    font-weight: normal;
-  }
-  .script-a-sm {
-    font-family: 'Edwardian Script', cursive;
-    font-size: 1.1em;
-    font-weight: normal;
-  }
-  .hero-sans {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(4rem, 10vw, 9rem);
-    font-weight: 900;
-    letter-spacing: -0.03em;
-  }
-  .hero-space { display: inline-block; width: 0.3em; }
-
-  .hero-img-wrap {
-    width: clamp(200px, 28vw, 360px);
-    height: clamp(260px, 36vw, 480px);
     overflow: hidden;
-    border-radius: 3px;
-    margin-top: 3rem;
-    position: relative;
-    z-index: 2;
   }
-  .hero-photo {
-    width: 100%;
-    height: 120%;
-    object-fit: cover;
-    object-position: center top;
+  .hero-title { margin: 0; line-height: 1.1; text-align: center; color: var(--g); font-weight: normal; }
+  .hero-title .script { font-size: clamp(6rem, 14vw, 9rem); }
+  .hero-title .sans { font-size: clamp(4rem, 9vw, 6rem); }
+  .hero-img { width: clamp(200px, 28vw, 360px); height: clamp(260px, 36vw, 480px); }
+
+  .parallax-img { overflow: hidden; border-radius: 3px; }
+  .parallax-img img {
     display: block;
-    transform: translateY(0);
-    will-change: transform;
-  }
-
-  .hero-scroll-hint {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    color: rgba(255,255,255,0.35);
-    animation: float 2s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(-6px); }
-  }
-
-  /* ── INTRO ── */
-  .about-intro {
-    padding: 7rem 5rem;
-  }
-
-  .intro-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    align-items: center;
-  }
-
-  .intro-text {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(1.4rem, 2.5vw, 2rem);
-    font-weight: 700;
-    line-height: 1.3;
-    color: #000;
-    margin-bottom: 1.5rem;
-  }
-
-  .intro-sub {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 1rem;
-    line-height: 1.7;
-    color: #444;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .stat-number {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(3rem, 5vw, 4.5rem);
-    font-weight: 900;
-    color: var(--color-green, #b8f000);
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.8rem;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  /* ── COMPÉTENCES ── */
-  .about-skills {
-    padding: 7rem 5rem;
-  }
-
-  .skills-layout {
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    gap: 6rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    align-items: start;
-  }
-
-  .skills-img-wrap {
-    width: 100%;
-    height: clamp(400px, 55vw, 650px);
-    overflow: hidden;
-    border-radius: 3px;
-    position: sticky;
-    top: 6rem;
-  }
-
-  .skills-img-wrap img {
     width: 100%;
     height: 120%;
     object-fit: cover;
@@ -405,360 +237,145 @@ const repeatedText = Array(15).fill(bannerText).join(' - ') + ' - ';
     will-change: transform;
   }
 
-  .skills-content {
-    display: flex;
-    flex-direction: column;
-    gap: 3.5rem;
-    padding-top: 1rem;
-  }
-
-  .skill-heading {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(1.8rem, 3vw, 2.5rem);
+  /* ── Intro ── */
+  .intro-inner { max-width: 1000px; margin: 0 auto; }
+  .intro-title {
+    max-width: 16em;
+    margin: 0 0 1.5rem;
+    font-size: clamp(2rem, 4.4vw, 3.8rem);
     font-weight: 900;
-    color: var(--color-green, #b8f000);
-    margin: 0 0 1rem;
+    line-height: 1.1;
     letter-spacing: -0.02em;
   }
-
-  .skill-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  /* un masque par mot : le mot monte depuis le bas */
+  .w { display: inline-block; overflow: hidden; vertical-align: top; margin-right: 0.28em; padding-bottom: 0.12em; }
+  .w > span {
+    display: inline-block;
+    transform: translateY(115%);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--i) * 70ms);
   }
-
-  .skill-list li {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.75);
-    padding-left: 1rem;
-    position: relative;
-    line-height: 1.5;
+  .hl {
+    background: linear-gradient(var(--g), var(--g)) 0 88% / 0% 36% no-repeat;
+    transition: background-size 0.7s ease calc(var(--i) * 70ms + 0.6s);
   }
+  .words.visible .w > span { transform: none; }
+  .words.visible .hl { background-size: 100% 36%; }
 
-  .skill-list li::before {
-    content: '—';
-    position: absolute;
-    left: -0.5rem;
-    color: var(--color-green, #b8f000);
-    opacity: 0.5;
-  }
+  .intro-sub { max-width: 34rem; margin: 0 0 4.5rem; font-size: 1.05rem; line-height: 1.7; color: #444; }
 
-  /* ── TIMELINE ── */
-  .about-timeline {
-    padding: 7rem 5rem;
-  }
-
-  .timeline-header {
-    max-width: 1200px;
-    margin: 0 auto 5rem;
-  }
-
-  .timeline-title {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(2rem, 4vw, 3.5rem);
+  /* ── Compétences ── */
+  .skills { display: grid; grid-template-columns: 1fr 1.4fr; gap: 6rem; align-items: start; }
+  .skills-img { height: clamp(400px, 55vw, 650px); position: sticky; top: 6rem; }
+  .skills-content { display: flex; flex-direction: column; gap: 3.5rem; padding-top: 1rem; }
+  .skills-content h3 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
     font-weight: 900;
-    color: #000;
-    line-height: 1.1;
-    margin: 0;
+    letter-spacing: -0.02em;
+    color: var(--g);
   }
+  .skill-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .skill-list li { position: relative; padding-left: 1rem; font-size: 0.95rem; line-height: 1.5; color: rgba(255, 255, 255, 0.75); }
+  .skill-list li::before { content: '—'; position: absolute; left: -0.5rem; color: var(--g); opacity: 0.5; }
 
-  .script-p {
-    font-family: 'Edwardian Script', cursive;
-    font-size: 1.3em;
-    font-weight: normal;
-    color: var(--color-green, #b8f000);
-  }
+  /* ── Parcours ── */
+  .timeline-title { margin-bottom: 5rem; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; line-height: 1.1; color: #000; }
+  .timeline-body { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; }
+  .timeline-text p { margin: 0 0 1.5rem; font-size: 0.95rem; line-height: 1.85; color: #333; text-align: justify; }
+  .timeline-text strong { color: #000; }
 
-  .timeline-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .timeline-text p {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.95rem;
-    line-height: 1.85;
-    color: #333;
-    margin-bottom: 1.5rem;
-    text-align: justify;
-  }
-
-  .timeline-text strong {
-    color: #000;
-    font-weight: 700;
-  }
-
-  /* Timeline items */
-  .timeline-events {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    position: relative;
-    padding-left: 2rem;
-  }
-
-  .timeline-events::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 1px;
-    background: rgba(0,0,0,0.15);
-  }
-
-  .timeline-item {
-    display: flex;
-    gap: 1.5rem;
-    padding-bottom: 2.5rem;
-    position: relative;
-  }
-
+  .timeline-events { position: relative; padding-left: 2rem; }
+  .timeline-events::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background: rgba(0, 0, 0, 0.15); }
+  .tl-item { position: relative; padding-bottom: 2.5rem; }
   .tl-dot {
+    position: absolute;
+    left: -2.45rem;
+    top: 0.35rem;
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background: #ccc;
-    flex-shrink: 0;
-    margin-top: 0.35rem;
-    position: absolute;
-    left: -2.45rem;
     border: 2px solid #f5f5f0;
   }
-
-  .tl-dot-green {
-    background: var(--color-green, #b8f000) !important;
-    box-shadow: 0 0 12px rgba(184,240,0,0.5);
-  }
-
-  .tl-content { flex: 1; }
-
-  .tl-year {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-green, #b8f000);
-    display: block;
-    margin-bottom: 0.3rem;
-  }
-
-  .highlight-item .tl-year { color: var(--color-green, #b8f000); }
-
-  .tl-title {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #000;
-    margin: 0 0 0.4rem;
-    line-height: 1.3;
-  }
-
-  .tl-desc {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.85rem;
-    color: #666;
-    line-height: 1.6;
-    margin: 0;
-  }
+  .tl-dot-green { background: var(--g); box-shadow: 0 0 12px rgba(155, 255, 0, 0.5); }
+  .tl-year { display: block; margin-bottom: 0.3rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--g); }
+  .tl-item h4 { margin: 0 0 0.4rem; font-size: 1rem; line-height: 1.3; }
+  .tl-item p { margin: 0; font-size: 0.85rem; line-height: 1.6; color: #666; }
 
   /* ── CTA ── */
-  .about-cta {
-    padding: 8rem 5rem;
-    text-align: center;
-  }
-
-  .cta-label {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 1rem;
-  }
-
-  .cta-big {
-    font-family: 'Edwardian Script', cursive;
-    font-size: clamp(5rem, 12vw, 11rem);
-    font-weight: normal;
-    color: var(--color-green, #b8f000);
-    line-height: 1;
-    margin: 0 0 3rem;
-  }
-
-  .cta-actions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-cta-main {
-    display: inline-block;
+  .about-cta { padding: 8rem 5rem; text-align: center; }
+  .cta-label { margin: 0 0 1rem; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); }
+  .cta-big { margin: 0 0 3rem; font-size: clamp(5rem, 12vw, 11rem); line-height: 1; color: var(--g); }
+  .cta-actions { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+  .btn {
     padding: 1rem 2.5rem;
-    background: var(--color-green, #b8f000);
-    color: #000;
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: 700;
+    border-radius: 50px;
     font-size: 0.9rem;
     letter-spacing: 0.06em;
     text-decoration: none;
-    border-radius: 50px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .btn-main { background: var(--g); color: #000; font-weight: 700; }
+  .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(155, 255, 0, 0.3); }
+  .btn-ghost { color: #fff; font-weight: 600; border: 1.5px solid rgba(255, 255, 255, 0.3); }
+  .btn-ghost:hover { border-color: var(--g); color: var(--g); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal, .w > span { transition: none; transform: none; opacity: 1; }
+    .hl { background-size: 100% 36%; }
   }
 
-  .btn-cta-main:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(184,240,0,0.3);
-  }
-
-  .btn-cta-secondary {
-    display: inline-block;
-    padding: 1rem 2.5rem;
-    background: transparent;
-    color: #fff;
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 0.06em;
-    text-decoration: none;
-    border: 1.5px solid rgba(255,255,255,0.3);
-    border-radius: 50px;
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-
-  .btn-cta-secondary:hover {
-    border-color: var(--color-green, #b8f000);
-    color: var(--color-green, #b8f000);
-  }
-
-  /* ── REVEAL ANIMATIONS ── */
-  .reveal-words span,
-  .reveal-words {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-
-  .reveal-words.visible,
-  .reveal-words.visible span {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .reveal-block {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .reveal-block.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Délais en cascade pour les skill blocks */
-  .skill-block:nth-child(2) { transition-delay: 0.15s; }
-  .skill-block:nth-child(3) { transition-delay: 0.3s; }
-  .timeline-item:nth-child(2) { transition-delay: 0.1s; }
-  .timeline-item:nth-child(3) { transition-delay: 0.2s; }
-  .timeline-item:nth-child(4) { transition-delay: 0.3s; }
-
-  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
-    .intro-grid,
-    .skills-layout,
-    .timeline-body {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-    }
-    .about-intro,
-    .about-skills,
-    .about-timeline,
-    .about-cta { padding: 5rem 2rem; }
-    .skills-img-wrap { position: relative; top: 0; height: 320px; }
+    .sec, .about-cta { padding: 5rem 1.5rem; }
+    .skills, .timeline-body { grid-template-columns: 1fr; gap: 3rem; }
+    .skills-img { position: relative; top: 0; height: 320px; }
   }
 </style>
 
 <script>
-  // ── Curseur personnalisé ──
-  const cursor = document.getElementById('cursor') as HTMLElement;
-  const dot = document.getElementById('cursor-dot') as HTMLElement;
+  // ── Curseur ──
+  const cursor = document.getElementById('cursor')!;
+  const dot = document.getElementById('cursor-dot')!;
   let cx = 0, cy = 0, tx = 0, ty = 0;
 
-  document.addEventListener('mousemove', (e) => {
+  addEventListener('mousemove', (e) => {
     tx = e.clientX;
     ty = e.clientY;
     dot.style.left = tx + 'px';
     dot.style.top = ty + 'px';
   });
-
-  function animCursor() {
+  (function loop() {
     cx += (tx - cx) * 0.12;
     cy += (ty - cy) * 0.12;
     cursor.style.left = cx + 'px';
     cursor.style.top = cy + 'px';
-    requestAnimationFrame(animCursor);
-  }
-  animCursor();
-
-  document.querySelectorAll('a, button, .poster-item').forEach(el => {
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a, button, [role=button]').forEach((el) => {
     el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
     el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
   });
 
-  // ── Parallaxe images ──
-  function updateParallax() {
-    document.querySelectorAll<HTMLElement>('.parallax-img img, .hero-photo').forEach(img => {
-      const wrap = img.closest('.parallax-img, .hero-img-wrap') as HTMLElement;
-      if (!wrap) return;
-      const rect = wrap.getBoundingClientRect();
-      const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-      const offset = center * 0.15;
-      img.style.transform = `translateY(${offset}px)`;
+  // ── Apparition au scroll ──
+  const io = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }),
+    { threshold: 0.15 }
+  );
+  document.querySelectorAll('.reveal, .words').forEach((el) => io.observe(el));
+
+  // ── Parallaxe ──
+  const wraps = document.querySelectorAll<HTMLElement>('.parallax-img');
+  const parallax = () =>
+    wraps.forEach((w) => {
+      const r = w.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      w.querySelector('img')!.style.transform = `translateY(${(r.top + r.height / 2 - innerHeight / 2) * 0.15}px)`;
     });
-  }
-
-  // ── Reveal au scroll ──
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  document.querySelectorAll('.reveal-words, .reveal-block').forEach(el => observer.observe(el));
-
-  // ── Compteurs animés ──
-  const counterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target as HTMLElement;
-      const target = parseInt(el.dataset.target || '0');
-      let current = 0;
-      const duration = 1200;
-      const step = target / (duration / 16);
-      const timer = setInterval(() => {
-        current = Math.min(current + step, target);
-        el.textContent = Math.floor(current).toString();
-        if (current >= target) clearInterval(timer);
-      }, 16);
-      counterObserver.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-
-  document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
-
-  // ── Scroll listener ──
-  window.addEventListener('scroll', updateParallax, { passive: true });
-  updateParallax();
+  addEventListener('scroll', parallax, { passive: true });
+  parallax();
 </script>
