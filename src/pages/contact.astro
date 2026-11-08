@@ -86,16 +86,17 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <!-- Message -->
-        <div style="margin-bottom: 1rem;">
-          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;">
-            Message
-          </label>
-          <input
-            type="text"
-            name="message"
-            style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
-          />
-        </div>
+<div style="margin-bottom: 1rem;">
+  <label for="message" style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;">
+    Message
+  </label>
+  <textarea
+    id="message"
+    name="message"
+    rows="1"
+    style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313; resize: none; overflow: hidden; display: block; line-height: 1.4;"
+  ></textarea>
+</div>
 
         <!-- Téléphone -->
         <div style="margin-bottom: 2rem;">
@@ -140,6 +141,11 @@ import Layout from '../layouts/Layout.astro';
     const form = document.getElementById('contact-form');
     const feedbackMessage = document.getElementById('feedback-message');
     const submitBtn = form.querySelector('button[type="submit"]');
+    const messageField = document.getElementById('message');
+messageField.addEventListener('input', () => {
+  messageField.style.height = 'auto';
+  messageField.style.height = messageField.scrollHeight + 'px';
+});
 
     function showFeedback(text, bg, color) {
       feedbackMessage.style.display = 'block';
@@ -181,6 +187,8 @@ import Layout from '../layouts/Layout.astro';
         // Succès
         showFeedback('✓ Votre message a bien été envoyé ! Je vous recontacte rapidement.', '#9bff00', '#131313');
         form.reset();
+
+        messageField.style.height = 'auto';
 
         // Masquer le message après 10 secondes
         setTimeout(() => {
