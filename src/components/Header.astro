@@ -39,19 +39,18 @@ import cvFile from '../assets/CV_Lison_Pruvost.pdf';
     </button>
   </div>
 
-  <!-- Menu mobile -->
-  <div id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
-    <nav class="container-custom py-6 flex flex-col gap-4">
-      <a href="/projets" class="mobile-nav-link">Projets</a>
-      <a href="/mes-styles" class="mobile-nav-link">Mes styles</a>
-      <div class="divider-green my-1"></div>
-      <a href={cvFile} target="_blank" rel="noopener noreferrer" class="mobile-nav-link mobile-nav-link-highlight">
-  Télécharger CV
-</a>
-      <a href="/a-propos" class="mobile-nav-link">À propos</a>
-      <a href="/contact" class="mobile-nav-link mobile-nav-link-cta">Contact</a>
-    </nav>
-  </div>
+<!-- Menu mobile -->
+<div id="mobile-menu" class="mobile-menu md:hidden" aria-hidden="true">
+  <nav class="container-custom py-6 flex flex-col gap-4">
+    <a href="/projets" class="mobile-nav-link">Projets</a>
+    <a href={cvFile} target="_blank" rel="noopener noreferrer" class="mobile-nav-link mobile-nav-link-highlight">
+      Télécharger CV
+    </a>
+    <a href="/a-propos" class="mobile-nav-link">À propos</a>
+    <div class="divider-green my-1"></div>
+    <a href="/contact" class="mobile-nav-link mobile-nav-link-cta">Contact</a>
+  </nav>
+</div>
 </header>
 
 <!-- Spacer pour éviter que le contenu passe sous le header -->

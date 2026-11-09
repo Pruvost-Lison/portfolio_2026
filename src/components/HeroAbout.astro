@@ -39,17 +39,17 @@ import intropicture from '../assets/Photo_landing_page.png';
   </div>
 
   <div class="hero-content">
-    <div class="container-custom">
+    <div class="container-custom hero-container">
       <div class="hero-title">
-        <h1 style="line-height: 1.1; margin-bottom: 3rem; color: var(--color-green); font-weight: normal; text-align: center;">
-          <span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 9rem;">{titleLine1} </span><span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 9rem;">P</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 6rem;">{titleLine2}</span>
+        <h1 class="about-title">
+          <span class="t-script">{titleLine1} </span><span class="t-script">P</span><span class="t-bold">{titleLine2}</span>
         </h1>
       </div>
 
       <div class="card-3d-container" id="card3d">
         <div class="card-3d">
           <div class="card-inner">
-            <img src={cardSvg.src} alt="Card" class="card-svg" />
+            <img src={cardSvg.src} alt="Card" class="card-svg" draggable="false" />
           </div>
         </div>
       </div>
@@ -100,6 +100,7 @@ import intropicture from '../assets/Photo_landing_page.png';
   .hero-section {
     position: relative;
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -127,9 +128,9 @@ import intropicture from '../assets/Photo_landing_page.png';
   }
 
   .banner-bottom {
-  top: 13%;                 /* même hauteur → croisement exactement au milieu */
-  transform-origin: center;
-}
+    top: 13%;
+    transform-origin: center;
+  }
 
   .scrolling-banner-pink {
     background-color: var(--color-pink);
@@ -175,15 +176,69 @@ import intropicture from '../assets/Photo_landing_page.png';
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    min-height: 100svh;
     padding-top: 35vh;
     margin-top: 28vh;
     margin-bottom: 15vh;
+  }
+
+  /* Le conteneur prend toute la largeur et centre ses enfants */
+  .hero-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .hero-title {
     text-align: center;
     margin-top: 15vh;
     margin-bottom: 15vh;
+    width: 100%;
+  }
+
+  /* === TITRE (tailles adaptatives) === */
+  .about-title {
+    line-height: 1.1;
+    margin: 0 0 3rem;
+    color: var(--color-green);
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .t-script {
+    font-family: 'Edwardian Script', cursive;
+    font-weight: normal;
+    font-size: clamp(4.5rem, 21vw, 9rem);
+  }
+
+  .t-bold {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: clamp(3rem, 14vw, 6rem);
+  }
+
+  /* === MOBILE : espacements réduits === */
+  @media (max-width: 767px) {
+    .hero-content {
+      padding-top: 14vh;
+      margin-top: 6vh;
+      margin-bottom: 8vh;
+    }
+
+    .hero-title {
+      margin-top: 4vh;
+      margin-bottom: 6vh;
+    }
+
+    .about-title {
+      margin-bottom: 1rem;
+    }
+
+    .card-3d {
+      max-width: 92%;
+    }
   }
 
   /* === CARTE 3D === */
@@ -192,12 +247,16 @@ import intropicture from '../assets/Photo_landing_page.png';
     justify-content: center;
     align-items: center;
     perspective: 1000px;
+    width: 100%;
   }
 
   .card-3d {
     width: 100%;
     max-width: 550px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .card-inner {
@@ -213,6 +272,7 @@ import intropicture from '../assets/Photo_landing_page.png';
     display: block;
     filter: drop-shadow(0 20px 60px rgba(155, 255, 0, 0.3));
     transform: translateZ(0);
+    -webkit-user-drag: none;
   }
 
   /* === BIO SECTION === */
@@ -277,13 +337,11 @@ import intropicture from '../assets/Photo_landing_page.png';
   }
 
   /* === WORD REVEAL === */
-  /* Les spans mot sont cachés par défaut */
   .word {
     display: inline;
     opacity: 0;
     filter: blur(4px);
     transition: opacity 0.35s ease, filter 0.35s ease;
-    /* Pas de transform pour garder le layout intact */
   }
 
   .word.is-visible {
@@ -349,23 +407,55 @@ import intropicture from '../assets/Photo_landing_page.png';
 
 <script>
   /* ============================================
-     CARTE 3D
+     CARTE 3D (souris + doigt)
   ============================================ */
   const card3d = document.getElementById('card3d');
   const cardInner = card3d?.querySelector('.card-inner') as HTMLElement | null;
 
   if (card3d && cardInner) {
+    const MAX_TILT = 30;
+
+    function tiltFromPoint(clientX: number, clientY: number, scale: number) {
+      const rect = card3d!.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      // On limite l'inclinaison même si le doigt sort un peu de la carte
+      const px = Math.max(-0.5, Math.min(0.5, (x - rect.width / 2) / rect.width));
+      const py = Math.max(-0.5, Math.min(0.5, (y - rect.height / 2) / rect.height));
+      const rotateX = py * -MAX_TILT;
+      const rotateY = px * MAX_TILT;
+      cardInner!.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale},${scale},${scale})`;
+    }
+
+    function resetCard() {
+      cardInner!.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+    }
+
+    // Souris (desktop)
     card3d.addEventListener('mousemove', (e: MouseEvent) => {
-      const rect = card3d.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const rotateX = ((y - rect.height / 2) / rect.height) * -30;
-      const rotateY = ((x - rect.width / 2) / rect.width) * 30;
-      cardInner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+      tiltFromPoint(e.clientX, e.clientY, 1.02);
     });
-    card3d.addEventListener('mouseleave', () => {
-      cardInner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
-    });
+    card3d.addEventListener('mouseleave', resetCard);
+
+    // Doigt (mobile) : le scroll vertical reste possible
+    card3d.addEventListener('touchstart', (e: TouchEvent) => {
+      const t = e.touches[0];
+      cardInner.style.transition = 'transform 0.1s ease-out';
+      tiltFromPoint(t.clientX, t.clientY, 1.02);
+    }, { passive: true });
+
+    card3d.addEventListener('touchmove', (e: TouchEvent) => {
+      const t = e.touches[0];
+      tiltFromPoint(t.clientX, t.clientY, 1.02);
+    }, { passive: true });
+
+    const endTouch = () => {
+      // Retour en douceur quand on lève le doigt
+      cardInner.style.transition = 'transform 0.5s ease-out';
+      resetCard();
+    };
+    card3d.addEventListener('touchend', endTouch);
+    card3d.addEventListener('touchcancel', endTouch);
   }
 
   /* ============================================
@@ -401,7 +491,6 @@ import intropicture from '../assets/Photo_landing_page.png';
         } else if (part.length > 0) {
           const span = document.createElement('span');
           span.className = 'word';
-          // ✅ Style inline immédiat — contourne Tailwind purge + timing CSS
           span.style.cssText = 'display:inline; opacity:0; filter:blur(4px); transition:opacity 0.4s ease, filter 0.4s ease;';
           span.textContent = part;
           frag.appendChild(span);
@@ -411,10 +500,8 @@ import intropicture from '../assets/Photo_landing_page.png';
     });
   }
 
-  // Wrap tous les conteneurs
   document.querySelectorAll<HTMLElement>('[data-word-reveal]').forEach(wrapWords);
 
-  // Observer par mot — reset à la sortie du viewport
   const wordObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -429,7 +516,6 @@ import intropicture from '../assets/Photo_landing_page.png';
             word.style.filter = 'blur(0px)';
           }, delay);
         } else {
-          // Reset : repasse invisible pour le prochain passage
           word.style.opacity = '0';
           word.style.filter = 'blur(4px)';
         }

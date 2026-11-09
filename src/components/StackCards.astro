@@ -27,7 +27,7 @@ const cards = [
     color: '#b8f000',
     number: '03',
     tag: 'UX/UI, ergonomie, parcours, accessibilité, expérience',
-    title: 'EXPÉRIENCE\nUTILISATEUR',
+    title: 'BRANDING',
     img: experienceImg.src,
   },
 ];
@@ -51,13 +51,13 @@ const cards = [
           <!-- Titre en bas à gauche -->
           <h2 class="card-title" style={`color: ${card.color};`}>
             {card.title.split('\n').map((line) => (
-              <span class="title-line">{line}<br /></span>
+              <span class="title-line">{line}</span>
             ))}
           </h2>
 
           <!-- Image en haut à droite -->
           <div class="card-image-wrap">
-            <img src={card.img} alt={card.title} class="card-image" />
+            <img src={card.img} alt={card.title.replace('\n', ' ')} class="card-image" />
           </div>
         </div>
       </div>
@@ -67,20 +67,22 @@ const cards = [
 </div>
 
 <style>
-  /* La hauteur totale = nb de cartes × 100vh pour avoir assez de scroll */
+  /* Hauteur de scroll : 2 transitions + une petite pause à la fin */
   .stack-scroll-wrapper {
     position: relative;
-    height: 400vh; /* 3 cartes × ~130vh de scroll chacune */
+    height: 350vh;   /* fallback */
+    height: 350svh;
   }
 
   .stack-sticky {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100vh;   /* fallback */
+    height: 100svh;  /* évite le bug de la barre d'adresse sur mobile */
     overflow: hidden;
   }
 
-  /* Chaque carte = plein écran, empilées, la 1ère visible par défaut */
+  /* Chaque carte = plein écran, empilées */
   .stack-card {
     position: absolute;
     inset: 0;
@@ -100,9 +102,11 @@ const cards = [
     width: 100%;
     height: 100%;
     padding: 3rem;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    box-sizing: border-box;
   }
 
   .card-tag {
@@ -110,15 +114,17 @@ const cards = [
     top: 4.5rem;
     left: 4.5rem;
     font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    font-size: clamp(0.8rem, 2vw, 1.6rem);
     line-height: 1.5;
-    max-width: 380px;
+    max-width: min(380px, 45%); /* ne passe plus sous l'image */
     opacity: 0.85;
+    margin: 0;
   }
 
   .card-title {
     font-family: Helvetica, Arial, sans-serif;
-    font-size: clamp(3rem, 7vw, 6.5rem);
+    /* Valeur de départ : le script l'ajuste ensuite pile à la largeur dispo */
+    font-size: clamp(2rem, 12vw, 6.5rem);
     font-weight: 900;
     line-height: 0.95;
     letter-spacing: -0.02em;
@@ -126,12 +132,20 @@ const cards = [
     text-transform: uppercase;
   }
 
+  /* Chaque ligne reste sur une seule ligne et peut être mesurée */
+  .title-line {
+    display: block;
+    width: max-content;
+    white-space: nowrap;
+  }
+
   .card-image-wrap {
     position: absolute;
     top: 4.5rem;
     right: 4.5rem;
-    width: clamp(220px, 30vw, 420px);
-    height: clamp(320px, 52vw, 620px);
+    width: clamp(120px, 30vw, 420px);
+    aspect-ratio: 2 / 3;
+    max-height: 60%;
     overflow: hidden;
     border-radius: 4px;
   }
@@ -143,62 +157,135 @@ const cards = [
     display: block;
   }
 
+  /* Tablette */
+  @media (max-width: 900px) {
+    .card-inner {
+      padding: 2.5rem;
+      padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    .card-tag { top: 2.5rem; left: 2.5rem; }
+    .card-image-wrap { top: 2.5rem; right: 2.5rem; }
+  }
+
+  /* Mobile */
   @media (max-width: 600px) {
-    .card-inner { padding: 2rem; }
-    .card-tag { top: 2rem; left: 2rem; font-size: 0.75rem; }
-    .card-image-wrap { top: 2rem; right: 2rem; }
+    /* Colonne : tag en haut, image qui remplit le milieu, titre en bas */
+    .card-inner {
+      padding: 1.5rem;
+      padding-top: 5rem; /* dégage le header fixe */
+      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+    .card-tag {
+      position: static;
+      top: auto;
+      left: auto;
+      order: 1;
+      max-width: 100%;
+      font-size: 0.8rem;
+    }
+    .card-image-wrap {
+      position: relative;
+      top: auto;    /* annule les top/right hérités de la tablette, */
+      right: auto;  /* sinon l'image est décalée avec position: relative */
+      order: 2;
+      flex: 0 1 auto;
+      min-height: 0;
+      width: 62%;          /* ← règle la taille ici (ex: 50% plus petit, 75% plus grand) */
+      aspect-ratio: 3 / 4;
+      max-height: 100%;
+      margin: auto;        /* centrée horizontalement et verticalement dans l'espace libre */
+    }
+    .card-image {
+      position: absolute;
+      inset: 0;
+    }
+    .card-title {
+      order: 3;
+      flex-shrink: 0;
+    }
   }
 </style>
 
 <script>
   const wrapper = document.querySelector('.stack-scroll-wrapper') as HTMLElement;
+  const sticky = wrapper.querySelector('.stack-sticky') as HTMLElement;
   const cards = document.querySelectorAll<HTMLElement>('.stack-card');
   const CARD_COUNT = cards.length;
 
   let ticking = false;
 
+  const clamp = (v: number, min = 0, max = 1) => Math.min(Math.max(v, min), max);
+  const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
+
   function update() {
     const rect = wrapper.getBoundingClientRect();
-    const wrapperTop = -rect.top; // pixels scrollés dans le wrapper
-    const wrapperHeight = wrapper.offsetHeight - window.innerHeight;
 
-    // Progression globale 0→1 sur toute la section
-    const progress = Math.min(Math.max(wrapperTop / wrapperHeight, 0), 1);
+    // Hauteur réelle du sticky, pas window.innerHeight (qui varie sur mobile)
+    const scrollable = wrapper.offsetHeight - sticky.offsetHeight;
+    const progress = clamp(-rect.top / scrollable);
 
-    // Chaque carte occupe 1/CARD_COUNT de la progression
-    const segment = 1 / CARD_COUNT;
+    // (CARD_COUNT - 1) transitions : la carte 0 est déjà en place
+    const segment = 1 / (CARD_COUNT - 1);
 
     cards.forEach((card, i) => {
-      // Progression locale de cette carte (0→1)
-      const cardStart = i * segment;
-      const cardProgress = Math.min(Math.max((progress - cardStart) / segment, 0), 1);
-
-      if (i === 0) {
-        // Première carte : toujours visible, ne bouge pas
-        card.style.transform = 'translateY(0%)';
-      } else {
-        // Les cartes suivantes arrivent du bas
-        // 0 → encore cachée en bas (100%)
-        // 1 → pleinement posée (0%)
-        const eased = easeOutQuart(cardProgress);
-        const translateY = 100 - eased * 100;
-        card.style.transform = `translateY(${translateY}%)`;
-      }
+      if (i === 0) return;
+      const cardProgress = clamp((progress - (i - 1) * segment) / segment);
+      const translateY = 100 - easeOutQuart(cardProgress) * 100;
+      card.style.transform = `translateY(${translateY}%)`;
     });
 
     ticking = false;
   }
 
-  function easeOutQuart(x: number): number {
-    return 1 - Math.pow(1 - x, 4);
-  }
-
-  window.addEventListener('scroll', () => {
+  function onScroll() {
     if (!ticking) {
       requestAnimationFrame(update);
       ticking = true;
     }
-  });
+  }
 
+  // Ajuste chaque titre pour que sa ligne la plus longue remplisse
+  // exactement la largeur disponible (quel que soit le téléphone)
+  const titles = document.querySelectorAll<HTMLElement>('.card-title');
+  const MAX_FONT = 104; // 6.5rem, plafond desktop
+
+  function fitTitles() {
+    titles.forEach((title) => {
+      const inner = title.parentElement as HTMLElement;
+      const style = getComputedStyle(inner);
+      const available =
+        inner.clientWidth -
+        parseFloat(style.paddingLeft) -
+        parseFloat(style.paddingRight);
+
+      // Mesure à une taille de référence
+      const REF = 100;
+      title.style.fontSize = `${REF}px`;
+      let widest = 0;
+      title.querySelectorAll<HTMLElement>('.title-line').forEach((line) => {
+        widest = Math.max(widest, line.offsetWidth);
+      });
+      if (!widest) return;
+
+      const cap = Math.min(MAX_FONT, window.innerWidth * 0.2);
+      const size = Math.min((REF * available) / widest, cap);
+      title.style.fontSize = `${Math.floor(size)}px`;
+    });
+  }
+
+  function refresh() {
+    fitTitles();
+    onScroll();
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', refresh);
+  window.addEventListener('orientationchange', refresh);
+  // Re-mesure une fois les polices chargées
+  document.fonts?.ready.then(refresh);
+
+  fitTitles();
   update();
 </script>

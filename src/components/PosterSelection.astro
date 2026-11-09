@@ -19,6 +19,8 @@ const posters = [
 
 // Rotations en éventail : de gauche très incliné vers droite
 const rotations = [-22, -13, -6, 4, 12, 20];
+// Valeurs SANS unité : elles sont multipliées par --k en CSS
+// (--k = 1px sur desktop, une fraction de vw sur mobile)
 const translateX = [-200, -120, -50, 20, 100, 175];
 const translateY = [60, 30, 10, 10, 25, 55];
 ---
@@ -38,8 +40,8 @@ const translateY = [60, 30, 10, 10, 25, 55];
         data-index={i}
         style={`
           --rot: ${rotations[i]}deg;
-          --tx: ${translateX[i]}px;
-          --ty: ${translateY[i]}px;
+          --tx: ${translateX[i]};
+          --ty: ${translateY[i]};
           --z: ${i + 1};
         `}
       >
@@ -70,7 +72,7 @@ const translateY = [60, 30, 10, 10, 25, 55];
 
   .poster-title {
     font-family: Helvetica, Arial, sans-serif;
-    font-size: 6rem;
+    font-size: clamp(2.25rem, 11vw, 6rem);
     font-weight: bold;
     color: var(--color-green);
     margin: 0;
@@ -79,13 +81,14 @@ const translateY = [60, 30, 10, 10, 25, 55];
 
   .script-s {
     font-family: 'Edwardian Script', cursive;
-    font-size: 9rem;
+    font-size: 1.5em; /* = 9rem quand le titre fait 6rem, et suit sur mobile */
     font-weight: normal;
     line-height: 0.8;
   }
 
   /* === FAN === */
   .poster-fan {
+    --k: 1px; /* unité d'échelle des décalages : 1px desktop */
     position: relative;
     height: 580px;
     display: flex;
@@ -98,7 +101,9 @@ const translateY = [60, 30, 10, 10, 25, 55];
     position: absolute;
     width: clamp(160px, 18vw, 250px);
     height: clamp(240px, 27vw, 375px);
-    transform: translateX(var(--tx)) translateY(var(--ty)) rotate(var(--rot));
+    transform: translateX(calc(var(--tx) * var(--k)))
+               translateY(calc(var(--ty) * var(--k)))
+               rotate(var(--rot));
     transform-origin: bottom center;
     z-index: var(--z);
     cursor: pointer;
@@ -126,21 +131,43 @@ const translateY = [60, 30, 10, 10, 25, 55];
     z-index: 1;
     transition: opacity 0.35s ease;
     border-radius: 3px;
+    pointer-events: none;
   }
 
-  /* Au hover : poster se redresse, monte, ombre forte, overlay disparaît */
-  .poster-item:hover {
-    transform: translateX(var(--tx)) translateY(-60px) rotate(0deg) scale(1.08);
+  /* Poster "sélectionné" : au hover (souris) OU au tap (tactile, classe .is-active) */
+  .poster-item.is-active {
+    transform: translateX(calc(var(--tx) * var(--k)))
+               translateY(calc(-60 * var(--k)))
+               rotate(0deg) scale(1.08);
     z-index: 20 !important;
     box-shadow: 0 30px 80px rgba(0,0,0,0.8);
   }
 
-  .poster-item:hover .poster-overlay {
+  .poster-item.is-active .poster-overlay {
     opacity: 0;
   }
 
-  .poster-item:hover img {
+  .poster-item.is-active img {
     transform: scale(1.04);
+  }
+
+  /* Hover uniquement sur appareils avec souris (évite l'état "collé" au tap) */
+  @media (hover: hover) {
+    .poster-item:hover {
+      transform: translateX(calc(var(--tx) * var(--k)))
+                 translateY(calc(-60 * var(--k)))
+                 rotate(0deg) scale(1.08);
+      z-index: 20 !important;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+    }
+
+    .poster-item:hover .poster-overlay {
+      opacity: 0;
+    }
+
+    .poster-item:hover img {
+      transform: scale(1.04);
+    }
   }
 
   /* === CTA === */
@@ -171,8 +198,48 @@ const translateY = [60, 30, 10, 10, 25, 55];
     border-color: var(--color-green);
   }
 
-  @media (max-width: 600px) {
-    .poster-fan { height: 320px; }
-    .poster-header { padding-left: 1.5rem; }
+  /* === MOBILE / PETITE TABLETTE === */
+  @media (max-width: 700px) {
+    .poster-section {
+      padding: 6rem 1rem 4rem;
+    }
+
+    .poster-header {
+      padding-left: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .poster-fan {
+      /* Décalages proportionnels à la largeur d'écran :
+         l'éventail garde la même forme sur tous les téléphones */
+      --k: 0.1vw;
+      height: 62vw;
+      margin-bottom: 2rem;
+    }
+
+    .poster-item {
+      width: 26vw;
+      height: 39vw;
+    }
   }
 </style>
+
+<script>
+  // Tactile : un tap sur un poster le met en avant, un tap ailleurs (ou sur le même) le repose
+  const posterItems = document.querySelectorAll<HTMLElement>('#poster-fan .poster-item');
+
+  function clearActive() {
+    posterItems.forEach((el) => el.classList.remove('is-active'));
+  }
+
+  posterItems.forEach((item) => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasActive = item.classList.contains('is-active');
+      clearActive();
+      if (!wasActive) item.classList.add('is-active');
+    });
+  });
+
+  document.addEventListener('click', clearActive);
+</script>

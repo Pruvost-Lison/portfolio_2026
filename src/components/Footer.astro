@@ -20,7 +20,7 @@
           </ul>
         </div>
         
-        <a href="mailto:lison.pruvoststudio@gmail.com" class="text-xl hover:text-green transition">
+        <a href="mailto:lison.pruvoststudio@gmail.com" class="text-lg sm:text-xl break-all hover:text-green transition">
           lison.pruvoststudio@gmail.com
         </a>
       </div>
@@ -43,7 +43,7 @@
     <!-- Ligne de séparation -->
     <div class="border-t border-white-pure/20 pt-6">
       <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-        <p class="text-white-pure/70">
+        <p class="text-white-pure/70 text-center md:text-left">
           © 2026 — Lison Pruvost • Code source disponible sur GitHub • Tous droits réservés.
         </p>
         
@@ -59,15 +59,13 @@
             </svg>
           </a>
         </div>
-        
-
       </div>
     </div>
   </div>
   
   <!-- Bande verte en bas avec nom géant -->
-  <div class="bg-green py-8 overflow-hidden">
-    <div class="text-black font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter whitespace-nowrap">
+  <div class="footer-band bg-green py-8 px-4 md:px-0 overflow-hidden">
+    <div class="footer-name w-max text-black font-bold text-6xl md:text-8xl lg:text-9xl tracking-tighter whitespace-nowrap">
       LISONPRUVOST
     </div>
   </div>
@@ -78,4 +76,46 @@
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
+
+  /* Valeur de départ sur mobile (le script l'ajuste ensuite pile à la largeur) */
+  @media (max-width: 767px) {
+    .footer-name {
+      font-size: 11.5vw;
+      line-height: 1;
+    }
+  }
 </style>
+
+<script>
+  // Mobile : le grand nom remplit exactement la largeur de la bande verte,
+  // quelle que soit la largeur du téléphone. Desktop : tailles Tailwind d'origine.
+  const band = document.querySelector<HTMLElement>('.footer-band');
+  const name = document.querySelector<HTMLElement>('.footer-name');
+
+  function fitName() {
+    if (!band || !name) return;
+
+    if (window.innerWidth >= 768) {
+      name.style.fontSize = '';
+      return;
+    }
+
+    const style = getComputedStyle(band);
+    const available =
+      band.clientWidth -
+      parseFloat(style.paddingLeft) -
+      parseFloat(style.paddingRight);
+
+    const REF = 100;
+    name.style.fontSize = `${REF}px`;
+    const width = name.offsetWidth;
+    if (!width) return;
+
+    name.style.fontSize = `${Math.floor((REF * available) / width)}px`;
+  }
+
+  fitName();
+  window.addEventListener('resize', fitName);
+  window.addEventListener('orientationchange', fitName);
+  document.fonts?.ready.then(fitName);
+</script>
