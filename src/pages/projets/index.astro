@@ -8,6 +8,16 @@ import { getImage } from '../../data/images';
 
 // Filtres générés à partir des données (ordre d'apparition)
 const filtres = [...new Set(projets.flatMap((p) => p.filtres))];
+
+// Traduction des libellés de filtres (les valeurs restent en français pour filtrer)
+const filtresEn: Record<string, string> = {
+  'Développement web': 'Web development',
+  'Direction Artistique': 'Art direction',
+  'Photographie': 'Photography',
+  'Design graphique': 'Graphic design',
+  'Branding': 'Branding',
+  'Motion design': 'Motion design',
+};
 ---
 
 <Layout title="Projets — Lison Pruvost">
@@ -22,17 +32,17 @@ const filtres = [...new Set(projets.flatMap((p) => p.filtres))];
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1 class="hero-title">
-        <span class="script-p">P</span><span class="hero-sans">rojets</span>
+        <span class="script-p">P</span><span class="hero-sans" data-fr data-en="rojects">rojets</span>
       </h1>
     </div>
   </section>
 
   <section class="projets-body">
     <div class="filtres-wrap">
-      <button class="filtre-btn active" data-filter="all">Tous</button>
+      <button class="filtre-btn active" data-filter="all" data-fr data-en="All">Tous</button>
       <div class="filtres-dynamic">
         {filtres.map((f) => (
-          <button class="filtre-btn" data-filter={f}>{f}</button>
+          <button class="filtre-btn" data-filter={f} data-fr data-en={filtresEn[f] ?? f}>{f}</button>
         ))}
       </div>
     </div>
@@ -58,18 +68,18 @@ const filtres = [...new Set(projets.flatMap((p) => p.filtres))];
           <div class="projet-card-overlay"></div>
           <div class="projet-card-infos">
             <div class="projet-card-top">
-              <span class="projet-card-nom">{p.nom}</span>
-              <span class="projet-card-voir">Voir plus</span>
+              <span class="projet-card-nom" data-fr data-en={p.en.nom}>{p.nom}</span>
+              <span class="projet-card-voir" data-fr data-en="See more">Voir plus</span>
             </div>
             <div class="projet-card-comps">
-              {p.competencesCarte.map((c) => (
-                <span class="projet-card-comp">{c}</span>
+              {p.competencesCarte.map((c, j) => (
+                <span class="projet-card-comp" data-fr data-en={p.en.competencesCarte[j]}>{c}</span>
               ))}
             </div>
           </div>
         </a>
       ))}
-      <p class="projets-empty" id="projets-empty" hidden>Aucun projet dans cette catégorie.</p>
+      <p class="projets-empty" id="projets-empty" hidden data-fr data-en="No projects in this category.">Aucun projet dans cette catégorie.</p>
     </div>
   </section>
 
@@ -320,6 +330,20 @@ const filtres = [...new Set(projets.flatMap((p) => p.filtres))];
     card.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
   });
 
+  // Compteur : "3 projets" en français, "3 projects" en anglais
+  let visibleCount = cards.length;
+  function updateCount() {
+    const en = document.documentElement.lang === 'en';
+    const word = en ? 'project' : 'projet';
+    countEl.textContent = `${visibleCount} ${word}${visibleCount > 1 ? 's' : ''}`;
+  }
+
+  // Met à jour le compteur quand la langue change (bouton FR / EN)
+  new MutationObserver(updateCount).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['lang'],
+  });
+
   function setFiltre(filtre: string) {
     let visible = 0;
     cards.forEach((card) => {
@@ -329,7 +353,8 @@ const filtres = [...new Set(projets.flatMap((p) => p.filtres))];
       if (show) visible++;
     });
     buttons.forEach((b) => b.classList.toggle('active', b.dataset.filter === filtre));
-    countEl.textContent = `${visible} projet${visible > 1 ? 's' : ''}`;
+    visibleCount = visible;
+    updateCount();
     emptyEl.hidden = visible > 0;
   }
 

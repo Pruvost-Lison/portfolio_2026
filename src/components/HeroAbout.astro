@@ -3,6 +3,8 @@ interface Props {
   bannerText?: string;
   titleLine1?: string;
   titleLine2?: string;
+  titleEn1?: string;
+  titleEn2?: string;
   cardSvg: any;
   bioTitle?: string;
   bioContent?: string;
@@ -12,6 +14,8 @@ const {
   bannerText = "PROJECTS",
   titleLine1 = "À",
   titleLine2 = "ropos",
+  titleEn1 = "A",
+  titleEn2 = "bout",
   cardSvg,
   bioTitle = "Lis",
   bioContent = ""
@@ -42,7 +46,10 @@ import intropicture from '../assets/Photo_landing_page.png';
     <div class="container-custom hero-container">
       <div class="hero-title">
         <h1 class="about-title">
-          <span class="t-script">{titleLine1} </span><span class="t-script">P</span><span class="t-bold">{titleLine2}</span>
+          <!-- Français -->
+          <span data-l="fr"><span class="t-script">{titleLine1} </span><span class="t-script">P</span><span class="t-bold">{titleLine2}</span></span>
+          <!-- English -->
+          <span data-l="en"><span class="t-script">{titleEn1}</span><span class="t-bold">{titleEn2}</span></span>
         </h1>
       </div>
 
@@ -62,21 +69,41 @@ import intropicture from '../assets/Photo_landing_page.png';
   <div class="container-custom">
     <div class="bio-grid">
       <div class="bio-left">
-        <h2 class="bio-greeting" data-word-reveal>
-          Salut, moi c'est Lison mais vous me retrouver sous le nom de <span class="bio-name" data-keep>{bioTitle}</span> dans mes design je suis étudiante de MMI en filière création numérique
+        <!-- Français -->
+        <h2 class="bio-greeting" data-word-reveal data-l="fr">
+          Salut, moi c'est Lison mais vous me retrouvez sous le nom de <span class="bio-name" data-keep>{bioTitle}</span> dans mes designs. Je suis étudiante de MMI en filière création numérique
         </h2>
-        <a href="/a-propos" class="btn-voir-plus">Voir plus</a>
+        <!-- English -->
+        <h2 class="bio-greeting" data-word-reveal data-l="en">
+          Hi, I'm Lison, but you'll find me under the name <span class="bio-name" data-keep>{bioTitle}</span> in my designs. I'm an MMI student specializing in digital creation
+        </h2>
+
+        <a href="/a-propos" class="btn-voir-plus">
+          <span data-l="fr">Voir plus</span><span data-l="en">See more</span>
+        </a>
       </div>
+
       <div class="bio-right">
-        <div class="bio-text" data-word-reveal>
+        <!-- Français -->
+        <div class="bio-text" data-word-reveal data-l="fr">
           <p>{bioContent} Je suis en 3e année de BUT MMI à Montbéliard et j'explore la création visuelle sous différentes formes : design graphique, branding, image, vidéo ou encore motion design.</p>
-<br/>
-<p>J'aime expérimenter, mélanger les approches et explorer de nouvelles idées. Pour moi, un projet ne se limite pas à son esthétique : il doit avoir une intention, une identité et raconter quelque chose.</p>
-<br/>
-<p>Curieuse et touche-à-tout, j'aime passer d'un univers à l'autre, découvrir de nouvelles techniques et faire évoluer ma pratique au fil des projets.</p>
-<br/>
-<p>Vous trouverez ici une sélection de mes réalisations. Bonne découverte !</p>
- </div>
+          <br/>
+          <p>J'aime expérimenter, mélanger les approches et explorer de nouvelles idées. Pour moi, un projet ne se limite pas à son esthétique : il doit avoir une intention, une identité et raconter quelque chose.</p>
+          <br/>
+          <p>Curieuse et touche-à-tout, j'aime passer d'un univers à l'autre, découvrir de nouvelles techniques et faire évoluer ma pratique au fil des projets.</p>
+          <br/>
+          <p>Vous trouverez ici une sélection de mes réalisations. Bonne découverte !</p>
+        </div>
+        <!-- English -->
+        <div class="bio-text" data-word-reveal data-l="en">
+          <p>{bioContent} I'm in my 3rd year of the BUT MMI program in Montbéliard, and I explore visual creation in many forms: graphic design, branding, imagery, video and motion design.</p>
+          <br/>
+          <p>I like to experiment, mix approaches and explore new ideas. To me, a project isn't just about its aesthetics: it needs an intention, an identity and a story to tell.</p>
+          <br/>
+          <p>Curious and versatile, I enjoy moving from one universe to another, discovering new techniques and evolving my practice project after project.</p>
+          <br/>
+          <p>Here you'll find a selection of my work. Enjoy!</p>
+        </div>
       </div>
     </div>
 
@@ -182,7 +209,6 @@ import intropicture from '../assets/Photo_landing_page.png';
     margin-bottom: 15vh;
   }
 
-  /* Le conteneur prend toute la largeur et centre ses enfants */
   .hero-container {
     width: 100%;
     display: flex;
@@ -419,7 +445,6 @@ import intropicture from '../assets/Photo_landing_page.png';
       const rect = card3d!.getBoundingClientRect();
       const x = clientX - rect.left;
       const y = clientY - rect.top;
-      // On limite l'inclinaison même si le doigt sort un peu de la carte
       const px = Math.max(-0.5, Math.min(0.5, (x - rect.width / 2) / rect.width));
       const py = Math.max(-0.5, Math.min(0.5, (y - rect.height / 2) / rect.height));
       const rotateX = py * -MAX_TILT;
@@ -431,13 +456,11 @@ import intropicture from '../assets/Photo_landing_page.png';
       cardInner!.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
     }
 
-    // Souris (desktop)
     card3d.addEventListener('mousemove', (e: MouseEvent) => {
       tiltFromPoint(e.clientX, e.clientY, 1.02);
     });
     card3d.addEventListener('mouseleave', resetCard);
 
-    // Doigt (mobile) : le scroll vertical reste possible
     card3d.addEventListener('touchstart', (e: TouchEvent) => {
       const t = e.touches[0];
       cardInner.style.transition = 'transform 0.1s ease-out';
@@ -450,7 +473,6 @@ import intropicture from '../assets/Photo_landing_page.png';
     }, { passive: true });
 
     const endTouch = () => {
-      // Retour en douceur quand on lève le doigt
       cardInner.style.transition = 'transform 0.5s ease-out';
       resetCard();
     };
@@ -508,8 +530,10 @@ import intropicture from '../assets/Photo_landing_page.png';
         const word = entry.target as HTMLElement;
         if (entry.isIntersecting) {
           const container = word.closest('[data-word-reveal]')!;
-          const allWords = Array.from(container.querySelectorAll('.word'));
-          const idx = allWords.indexOf(word);
+          // On ne compte que les mots visibles (l'autre langue est cachée)
+          const allWords = Array.from(container.querySelectorAll<HTMLElement>('.word'))
+            .filter((w) => w.offsetParent !== null);
+          const idx = Math.max(0, allWords.indexOf(word));
           const delay = Math.min(idx * 35, 700);
           setTimeout(() => {
             word.style.opacity = '1';

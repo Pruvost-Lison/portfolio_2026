@@ -1,12 +1,26 @@
 // src/data/projets.ts
 // Remplace les collections PocketBase "projet" + "detail_projet".
+// Les champs français restent les champs principaux.
+// L'anglais est dans le bloc `en` (mêmes tableaux, même ordre).
+
+export interface ProjetEn {
+  nom: string;
+  titre: string;
+  competencesCarte: string[];
+  competences: string[];
+  extrait: string;
+  explication: string[];
+  objectifs: string[];
+  resultat: string;
+  rapportIa?: string;
+}
 
 export interface Projet {
   slug: string;              // utilisé dans l'URL : /projets/<slug>
   nom: string;               // nom_projet (carte)
   titre: string;             // nom_detail (page détail)
   photo: string;             // photo_projet (nom de fichier dans src/assets)
-  filtres: string[];         // filtre_projet
+  filtres: string[];         // filtre_projet (reste en français : utilisé pour filtrer)
   competencesCarte: string[]; // competence_projet
   competences: string[];     // competence_detail
   extrait: string;
@@ -18,6 +32,7 @@ export interface Projet {
   galerie: string[];
   similaires: string[];      // slugs
   rapportIa?: string;
+  en: ProjetEn;              // traductions anglaises
 }
 
 export const projets: Projet[] = [
@@ -51,6 +66,31 @@ export const projets: Projet[] = [
     similaires: ['la-quete', 'yumly'],
     rapportIa:
       'Le code a été construit en m’aidant de l’IA lorsque mes compétences en développement web étaient moins solides.',
+    en: {
+      nom: 'Nextwear',
+      titre: 'Nexwear',
+      competencesCarte: ['web design', 'development', 'branding', 'art direction', 'mock-up'],
+      competences: ['Web development', 'UI/UX', 'Web design', 'Graphic design', 'Branding', 'Art direction'],
+      extrait:
+        'Design of a mobile-first website exploring the evolution of fashion through the lens of the future and emerging technologies, blending culture, design and innovation.',
+      explication: [
+        `NextWear is a website project designed with a mobile-first approach, aiming to explore the relationship between fashion, technology and visions of the future. The site follows the theme “Prehistory of the Future”, which invites us to look at our era as if it were being studied by future generations.`,
+        `Through several editorial sections, the platform offers a set of cultural content — films, books, music and objects — that illustrates how current innovations could influence the evolution of fashion and our relationship with clothing. The goal is to create an immersive experience that blends visual culture, reflection and digital design.`,
+        `The site particularly highlights themes related to techwear, smart textiles and digital fashion, which today represent major avenues for the future of the clothing industry. These innovations imagine garments able to react to their environment, collect data or adapt to weather conditions.`,
+        `The project was designed with current web usage in mind, where a large share of traffic now comes from smartphones. The interface is therefore designed primarily for mobile screens, ensuring smooth and accessible navigation.`,
+        `Beyond a simple information site, NextWear offers a reflection on a possible future of fashion, where clothes could become virtual, interactive or entirely digital, notably in immersive worlds such as the metaverse.`,
+      ],
+      objectifs: [
+        'Design a mobile-first website suited to current web usage',
+        'Explore the relationship between fashion, technology and innovation',
+        'Create an immersive editorial experience around the “fashion of the future”',
+        'Highlight the concepts of techwear, digital fashion and textile innovation',
+      ],
+      resultat:
+        'The project results in a conceptual website combining editorial design, forward-looking thinking and a mobile experience. NextWear offers a creative vision of the evolution of fashion, while raising awareness of the technological and cultural changes that could shape tomorrow’s clothing.',
+      rapportIa:
+        'The code was built with the help of AI when my web development skills were less solid.',
+    },
   },
 
   // ───────────────────────── LA QUÊTE ─────────────────────────
@@ -87,6 +127,34 @@ export const projets: Projet[] = [
     galerie: ['gallerie_LQ_1.png', 'gallerie_LQ_2.png', 'gallerie_LQ_3.png', 'gallerie_LQ_4.png', 'gallerie_LQ_5.png'],
     similaires: ['yumly', 'nextwear', 'ocean-autopsy'],
     rapportIa: 'Nous avons utilisé l’IA lors de ce projet pour compléter nos possibles lacunes en JavaScript.',
+    en: {
+      nom: 'The Quest',
+      titre: 'The Quest',
+      competencesCarte: ['UI/UX', 'development', 'mock-up', 'web design', 'branding'],
+      competences: ['Web development', 'UI/UX', 'Web design', 'Graphic design', 'Branding', 'Collaborative project'],
+      extrait:
+        'Design and development of a narrative game inspired by the pirate world, created as a team. The project combines storytelling, visual design and web development to create an interactive multi-level adventure.',
+      explication: [
+        `The Quest of the Three Keys is a narrative game made as a group project, combining web development and world-building. The goal of the project was to create a complete interactive experience, including the gameplay, characters, visual identity and narrative universe of the game.`,
+        `The story follows Elio, a young pirate who grew up in Port Royal and never knew his family. His only inheritance is Ari, a mysterious parrot who repeats a cryptic phrase: “Three keys open the fortune… the wind, the earth and the abyss.”`,
+        `While exploring an old abandoned cabin, Elio finds a damaged map bearing the same symbols the parrot talks about. He realizes that the legend of the Treasure of the Three Keys might be real. Determined to finish the quest his father supposedly began long ago, he repairs an old ship and sets off on an adventure.`,
+        `The game is structured around a progression in three levels, each corresponding to a different environment and a different challenge. Each level lets the player obtain a key symbolizing an essential pirate value.`,
+        `The first level, The Sea of Blades, throws the player into a naval battle seen from above. They must steer their ship, fight enemy vessels and survive the elements such as waves and storms. This first challenge highlights strategy and mastery of combat at sea. By winning the battle, the player obtains the Key of the Wind, a symbol of strength and domination of the oceans.`,
+        `The second level takes the player to The Wild Jungle, in a side view. After landing on a mysterious island, they must cross a dense environment filled with obstacles: logs, vines, carnivorous plants and ancient ruins. This level puts more emphasis on speed, precision and agility. At the end of this course, Elio obtains the Key of the Earth, representing courage and perseverance.`,
+        `The third and final level takes place in The Mermaid Lagoon, a more mysterious and contemplative environment. The player explores the place in search of objects linked to the mermaid who guards the last key. This level introduces a calmer dimension, based on exploration and puzzle-solving. Once the objects are gathered, the mermaid gives the player the Key of the Abyss, the last step before opening the legendary chest.`,
+        `The game was developed in HTML, CSS and JavaScript, and all the visual elements were created by the team: characters, animations, interface, graphic universe and communication materials around the game.`,
+      ],
+      objectifs: [
+        'Create a complete interactive game with an original narrative',
+        'Design a coherent visual universe inspired by the pirate imagination',
+        'Develop progressive gameplay across several levels',
+        'Experiment with game development in HTML, CSS and JavaScript',
+        'Imagine the branding and communication around the game',
+      ],
+      resultat:
+        'The project results in an interactive narrative game combining exploration, action and reflection. Thanks to a coherent graphic universe and a structured progression across several levels, The Quest of the Three Keys offers a playful experience where each step brings the player closer to the final goal: opening the treasure chest and completing the quest left by Elio’s father.',
+      rapportIa: 'We used AI during this project to make up for possible gaps in our JavaScript skills.',
+    },
   },
 
   // ───────────────────────── YUMLY ─────────────────────────
@@ -118,6 +186,29 @@ export const projets: Projet[] = [
     similaires: ['la-quete', 'nextwear', 'modulo'],
     rapportIa:
       'Pour ce projet collaboratif, nous nous sommes aidés de l’intelligence artificielle pour compléter nos compétences en développement web ainsi que pour des contenus génériques.',
+    en: {
+      nom: 'Yumly',
+      titre: 'Yumly',
+      competencesCarte: ['development', 'web design', 'branding', 'UI/UX', 'graphic design'],
+      competences: ['Web development', 'UI/UX', 'Web design', 'Branding', 'Collaborative project'],
+      extrait:
+        'Redesign of the Mercantina concept as a dynamic web experience that brings to life a directory site for ethnic food products.',
+      explication: [
+        `Taking inspiration from world cuisine should be simple. Yet finding authentic ingredients from elsewhere often remains complicated, with scattered offers and unclear information.`,
+        `Yumly was born to meet this need. Designed as a centralized platform, the experience simplifies access to international products and makes it easier to discover new flavors. With animations, dynamic content, recipe recommendations based on the ingredients on the site and much more.`,
+        `Through a clear and intuitive interface, the project focuses on user experience, content readability and showcasing products. Yumly positions itself as a bridge between cultures, turning gastronomy into an invitation to travel.`,
+      ],
+      objectifs: [
+        'Centralize access to culinary products from around the world',
+        'Simplify the search for and discovery of international ingredients',
+        'Offer a clear, smooth and accessible experience',
+        'Celebrate cultural diversity through design and content',
+      ],
+      resultat:
+        'Yumly offers a platform designed as a culinary exploration tool, combining usefulness and inspiration. The experience highlights the richness of gastronomic cultures while meeting a concrete need: making flavors from around the world easier to find and use every day.',
+      rapportIa:
+        'For this collaborative project, we used artificial intelligence to complement our web development skills and for generic content.',
+    },
   },
 
   // ───────────────────────── LÀ-BAS OÙ TOUT S'EFFACE ─────────────────────────
@@ -149,6 +240,28 @@ export const projets: Projet[] = [
     galerie: ['gallerie_LOTS_1.png', 'gallerie_LOTS_2.png', 'gallerie_LOTS_3.png', 'gallerie_LOTS_4.png', 'gallerie_LOTS_5.png'],
     // (l'ancien id 8ypl0uurl9sjx0h n'existait plus dans tes collections, je l'ai retiré)
     similaires: ['ocean-autopsy', 'modulo'],
+    en: {
+      nom: 'Where Everything Fades',
+      titre: 'Where Everything Fades',
+      competencesCarte: ['art direction', 'editing', 'photography'],
+      competences: ['Premiere Pro', 'Collaborative project', 'Art direction', 'Photography'],
+      extrait:
+        'Art direction and narrative photography project exploring the passage from childhood to adulthood through a series of staged photographs and a video slideshow with narration.',
+      explication: [
+        `Where Everything Fades is a multimedia writing project made by two people, blending photography, narration and sound design to create a short visual story.`,
+        `The project explores a moment of transition: the quiet passage from childhood to adulthood. Through a series of staged photographs and a video montage with a voice-over, the story follows a young woman returning to a place on the border between memory and imagination.`,
+        `Inspired by notions such as liminality (the state of being between two worlds) and the Welsh concept of Hiraeth, evoking nostalgia for a place that may no longer exist, the project builds a soft and melancholic atmosphere. The images, silences and soundscapes help create a narrative that is suggested rather than directly shown.`,
+        `The photographic work is accompanied by a reflection on staging and symbols: objects, spaces and framing become narrative clues that visually convey the character’s inner state. The whole takes the form of a video slideshow where the succession of images, the rhythm of the editing and the sound narration immerse the viewer in an immersive and introspective experience.`,
+      ],
+      objectifs: [
+        'Explore visual storytelling through photography',
+        'Create a poetic story combining image, sound and voice-over',
+        'Experiment with art direction and photographic staging',
+        'Visually convey emotions linked to memory, nostalgia and the passing of time',
+      ],
+      resultat:
+        'The project results in a sensitive audiovisual experience where photography and narration complement each other to tell an intimate and universal story. Through a minimalist and contemplative aesthetic, Where Everything Fades offers a personal interpretation of memory and of the transition between two stages of life.',
+    },
   },
 
   // ───────────────────────── OCEAN AUTOPSY ─────────────────────────
@@ -178,6 +291,28 @@ export const projets: Projet[] = [
       'Ocean Autopsy propose une campagne visuelle percutante qui transforme les radiographies en outil de sensibilisation. En révélant symboliquement la présence de plastique à l’intérieur des animaux marins, les visuels créent un contraste fort entre la beauté de la faune marine et la réalité de la pollution, invitant le spectateur à prendre conscience de l’urgence environnementale.',
     galerie: ['gallerie_OA_1.png', 'gallerie_OA_2.png', 'gallerie_OA_3.png', 'gallerie_OA_4.png', 'gallerie_OA_5.png'],
     similaires: ['modulo', 'la-quete', 'la-bas-ou-tout-s-efface'],
+    en: {
+      nom: 'Ocean Autopsy campaign',
+      titre: 'Ocean Autopsy',
+      competencesCarte: ['mock-up', 'art direction', 'graphic design'],
+      competences: ['Graphic design', 'UI/UX', 'Art direction'],
+      extrait:
+        'Metaphorical awareness campaign on ocean pollution, using medical imaging and X-rays to reveal the invisible impact of plastic on marine animals.',
+      explication: [
+        `Ocean Autopsy is an awareness campaign about plastic pollution in the oceans. Its principle: simulating a visual autopsy of marine animals to reveal what pollution hides inside their bodies.`,
+        `The art direction draws on medical imaging — X-rays. Each visual presents a marine animal (whale, turtle, bird, dolphin, crab) whose insides reveal plastic waste, marked in red to signal its toxic nature. Each animal is tied to a documented reality: turtles mistaking plastic bags for jellyfish, birds ingesting plastic fragments, microplastics found in the bodies of cetaceans.`,
+        `The campaign anchors its message in scientific data: nearly 90% of seabirds are believed to have plastic in their digestive system, a figure that could apply to almost all marine species by 2050.`,
+        `By combining medical metaphor, scientific facts and a minimalist aesthetic, Ocean Autopsy seeks to make visible what usually remains hidden — and to turn that revelation into awareness.`,
+      ],
+      objectifs: [
+        'Raise awareness of the impact of plastic pollution on marine animals',
+        'Use a strong visual metaphor to make an often invisible problem visible',
+        'Create a coherent visual campaign adaptable across several media',
+        'Combine graphic design and scientific data to strengthen the message',
+      ],
+      resultat:
+        'Ocean Autopsy offers a striking visual campaign that turns X-rays into an awareness tool. By symbolically revealing the presence of plastic inside marine animals, the visuals create a strong contrast between the beauty of marine wildlife and the reality of pollution, inviting the viewer to become aware of the environmental emergency.',
+    },
   },
 
   // ───────────────────────── MODULO ─────────────────────────
@@ -209,7 +344,32 @@ export const projets: Projet[] = [
       'Le projet aboutit à une identité visuelle minimaliste et contemporaine, capable de traduire les valeurs d’innovation et d’écoresponsabilité de mōdulo. Grâce à un logo typographique distinctif et une direction artistique épurée, la marque bénéficie d’une image forte, facilement identifiable et adaptée aux usages actuels du design et de la communication.',
     galerie: ['gallerie_MODU_1.png', 'gallerie_MODU_2.png', 'gallerie_MODU_3.png', 'gallerie_MODU_4.png', 'gallerie_MODU_5.png'],
     similaires: ['ocean-autopsy', 'la-quete', 'la-bas-ou-tout-s-efface'],
+    en: {
+      nom: 'Modulo',
+      titre: 'Modulo',
+      competencesCarte: ['branding', 'mock-up', 'graphic design'],
+      competences: ['Branding', 'UI/UX', 'Motion design'],
+      extrait:
+        'Creation of a visual identity and a typographic logo for mōdulo, an eco-responsible modular furniture brand designed for contemporary spaces.',
+      explication: [
+        `The mōdulo project consists of designing a visual identity consistent with the brand’s core values: modularity, elegance and eco-responsibility. The goal was to create a graphic universe able to convey both the innovation of the concept and the sustainable dimension of its products.`,
+        `The art direction moves toward a minimalist, chic and contemporary aesthetic, inspired by the codes of modern furniture design. The visual identity relies on clean lines and an elegant typeface, reflecting the functional and aesthetic character of the modular furniture offered by the brand.`,
+        `The work focused mainly on designing a typographic logo, highlighting the letter “O”, the central element of the word mōdulo. In the final proposal, this character is reworked through a subtle graphic cut, creating a distinctive sign that evokes the modularity and flexibility of the concept. This visual intervention adds a symbolic dimension while keeping great formal simplicity.`,
+        `The cut placed on the lower part of the letter creates a play of balance and alignment with the rest of the word, reinforcing the overall harmony of the logo. This choice also allows for different visual interpretations, while keeping a clear and immediate reading of the brand.`,
+        `The result is a minimalist, elegant and easily memorable logo, designed to work effectively across different media: digital identity, packaging, communication or print. Its simplicity also ensures excellent legibility, even at small sizes.`,
+        `Finally, the graphic system was designed with durability and evolution over time in mind. For example, the shape of the “ō” could be reinterpreted for a brand anniversary, rotating to form a “10”, while keeping the visual consistency of the identity. This approach shows the logo’s ability to evolve while staying true to the image of mōdulo.`,
+      ],
+      objectifs: [
+        'Create a modern visual identity consistent with the brand’s values',
+        'Highlight the modularity and flexibility of the concept through design',
+        'Develop a simple, elegant and memorable typographic logo',
+        'Design a lasting identity that adapts to different media',
+      ],
+      resultat:
+        'The project results in a minimalist and contemporary visual identity, able to convey mōdulo’s values of innovation and eco-responsibility. Thanks to a distinctive typographic logo and a clean art direction, the brand benefits from a strong, easily identifiable image suited to current design and communication practices.',
+    },
   },
+
   // ───────────────────────── EN COLOC ─────────────────────────
   {
     slug: 'en-coloc',
@@ -239,6 +399,28 @@ export const projets: Projet[] = [
       'Le projet prend la forme d’un épisode audiovisuel qui rassemble témoignages, expériences et conseils autour du départ à l’étranger. Le travail de direction artistique et de montage contribue à structurer le contenu et à proposer une expérience adaptée aux usages numériques.',
     galerie: ['gallerie_COLOC_1.png', 'gallerie_COLOC_2.jpeg', 'gallerie_COLOC_3.jpeg'],
     similaires: ['modulo', 'la-quete', 'la-bas-ou-tout-s-efface'],
+    en: {
+      nom: 'En Coloc',
+      titre: 'En Coloc',
+      competencesCarte: ['art direction', 'editing', 'Premiere Pro'],
+      competences: ['Art direction', 'Video editing', 'Adobe Premiere Pro', 'Collaborative project'],
+      extrait:
+        'Art direction and audiovisual editing of a podcast about student mobility, through the experiences, discoveries and advice of those who went to study abroad.',
+      explication: [
+        `En Coloc (“Flatsharing”) is a podcast project about the experience of studying abroad. Through conversations and testimonials, the project looks back at the realities of student mobility, from preparing to leave to discovering a new environment.`,
+        `The first episode, about a semester in Canada, covers expectations before leaving, surprises encountered on site, mistakes made and the advice the participants wish they had received before leaving.`,
+        `The work carried out covers the art direction and audiovisual editing of the project. The goal is to offer content that is clear and pleasant to follow, while building a visual identity consistent with the tone of the podcast.`,
+        `This project made it possible to work on showcasing spoken content through editing rhythm, sequence organization and visual choices, in order to make the story being told accessible and engaging.`,
+      ],
+      objectifs: [
+        'Design an art direction consistent with the podcast’s identity.',
+        'Edit audiovisual content built around testimonials and personal experiences.',
+        'Showcase speech and conversation through editing rhythm.',
+        'Make information and advice accessible to a student audience.',
+      ],
+      resultat:
+        'The project takes the form of an audiovisual episode that gathers testimonials, experiences and advice about leaving to study abroad. The art direction and editing work helps structure the content and offer an experience suited to digital use.',
+    },
   },
 
   // ───────────────────────── HAVE YOU SEEN THEM? ─────────────────────────
@@ -271,6 +453,30 @@ export const projets: Projet[] = [
       'Le projet aboutit à un concept de campagne immersif qui associe création d’objets, storytelling et communication multicanale. L’enquête devient le fil conducteur de l’ensemble des supports et transforme le lancement de la collection en une expérience qui conduit progressivement le public vers le Vitra Campus.',
     galerie: ['gallerie_V-CK_1.png', 'gallerie_V-CK_2.png', 'gallerie_V-CK_3.png', 'gallerie_V-CK_4.png', 'gallerie_V-CK_5.mp4'],
     similaires: ['modulo', 'la-quete', 'la-bas-ou-tout-s-efface'],
+    en: {
+      nom: 'HAVE YOU SEEN THEM?',
+      titre: 'HAVE YOU SEEN THEM?',
+      competencesCarte: ['art direction', 'branding', 'graphic design', 'mock-up'],
+      competences: ['Art direction', 'Creative strategy', 'Visual identity', 'Storytelling', 'Campaign design', 'Graphic design'],
+      extrait:
+        'Art direction and design of a fictional Vitra × Calvin Klein campaign around a collection of seven watch-making objects. A launch turned into an immersive investigation, between fashion, design and storytelling.',
+      explication: [
+        `HAVE YOU SEEN THEM? is a campaign concept imagined as part of a fictional call for tenders for the Vitra Design Museum. The project is based on a collaboration between Vitra and Calvin Klein, around a collection of seven watch-making objects that reinterpret the watch as a design object and an adornment.`,
+        `Inspired in particular by the work of George Nelson and by Calvin Klein’s watch-making heritage, the collection diverts the traditional uses of the watch to turn them into accessories to be worn differently.`,
+        `The main challenge is to introduce Vitra to a new audience, interested in fashion, luxury and visual culture. To do so, the launch of the collection becomes a fictional investigation: the seven pieces disappear and the public is invited to take part in the search.`,
+        `The campaign unfolds across different media: posters, videos, social media content, influencer packs and clues scattered across several European cities. Each element helps move the story forward until the final reveal at the Vitra Campus.`,
+        `The art direction work consists of creating a visual universe consistent with both brands, while developing a narrative able to spark curiosity and make the public want to take part.`,
+      ],
+      objectifs: [
+        'Imagine a creative collaboration between two complementary worlds: design and fashion.',
+        'Develop an art direction consistent with the identities of Vitra and Calvin Klein.',
+        'Design a narrative campaign that sparks curiosity and encourages public participation.',
+        'Adapt a creative concept across different print and digital media.',
+        'Give the public a new reason to discover the Vitra Campus.',
+      ],
+      resultat:
+        'The project results in an immersive campaign concept that combines object creation, storytelling and multichannel communication. The investigation becomes the common thread across all media and turns the collection launch into an experience that gradually leads the public to the Vitra Campus.',
+    },
   },
 
   // ───────────────────────── FA'BULL'EUX FESTIVAL ─────────────────────────
@@ -305,6 +511,32 @@ export const projets: Projet[] = [
       'Le projet a donné lieu à un ensemble de supports complémentaires pour promouvoir le festival : une affiche, une brochure imprimée à 300 exemplaires, une animation de logo et une vidéo promotionnelle. Cette expérience m’a permis de développer ma polyvalence graphique et audiovisuelle tout en adaptant mes choix créatifs aux besoins d’une collectivité et de son public.',
     galerie: ['gallerie_FAB_1.jpg', 'gallerie_FAB_2.png', 'gallerie_FAB_3.mp4', 'gallerie_FAB_4.png'],
     similaires: ['modulo', 'la-quete', 'la-bas-ou-tout-s-efface'],
+    en: {
+      nom: 'Fa’bull’eux Festival',
+      titre: 'Fa’bull’eux Festival',
+      competencesCarte: ['art direction', 'graphic design', 'print', 'after effects', 'editing', 'Premiere Pro', 'motion design'],
+      competences: ['Art direction', 'Graphic design', 'Layout', 'Adobe InDesign', 'Adobe Illustrator', 'Adobe Photoshop', 'Motion design', 'Adobe After Effects', 'Video editing in Premiere Pro'],
+      extrait:
+        'Design of communication materials for the third edition of the Fa’bull’eux Festival: poster, three-panel brochure, logo animation and promotional video. A colorful and playful art direction designed for young children and their families.',
+      explication: [
+        `As part of my internship in the communication department of the Communauté de Communes du Sundgau, I took part in the communication for the third edition of the Fa’bull’eux Festival, an event for children aged 0 to 6 and their families.`,
+        `The project included several complementary materials: an A3 poster, a three-panel brochure, a logo animation and a promotional video for social media.`,
+        `For the poster, I started by analyzing previous editions and doing graphic research in order to propose three different art directions. The chosen version combines blue tones evoking water, yellow accents and a dynamic composition around a cut-out photograph.`,
+        `I then designed a brochure that gathers the program, practical information and an illustrated map of the swimming pool site. Created in Illustrator, this map adopts a childlike isometric style to help families find their way around and picture themselves at the event.`,
+        `The project continued with a logo animation in After Effects, built around a dynamic effect evoking popcorn, then with the editing of a promotional video in Premiere Pro incorporating this animation.`,
+        `Overall, it allowed me to work on coherent communication across different media, balancing visual appeal, readability of information and adaptation to an audience made up of children and parents.`,
+      ],
+      objectifs: [
+        'Develop an art direction suited to young children and their families.',
+        'Adapt a graphic universe across different communication media.',
+        'Design attractive and legible printed materials.',
+        'Experiment with creating an illustrated map in Illustrator.',
+        'Create a logo animation and a promotional video for social media.',
+        'Ensure visual consistency between print and audiovisual materials.',
+      ],
+      resultat:
+        'The project resulted in a set of complementary materials to promote the festival: a poster, a brochure printed in 300 copies, a logo animation and a promotional video. This experience allowed me to develop my graphic and audiovisual versatility while adapting my creative choices to the needs of a local authority and its audience.',
+    },
   },
 
 ];

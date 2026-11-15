@@ -7,7 +7,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -24,14 +24,50 @@ const { title } = Astro.props;
 			</main>
 			<Footer />
 		</div>
+
+		<script is:inline>
+			function setLang(lang) {
+				localStorage.setItem('lang', lang);
+				document.documentElement.lang = lang;
+
+				document.querySelectorAll('[data-fr]').forEach((el) => {
+					// On garde le français d'origine en mémoire
+					if (!el.dataset.frOriginal) el.dataset.frOriginal = el.innerHTML;
+					const text = lang === 'en' ? el.dataset.en : el.dataset.frOriginal;
+					if (text) el.innerHTML = text;
+				});
+
+				document.querySelectorAll('[data-lang-btn]').forEach((b) => {
+					b.classList.toggle('active', b.dataset.langBtn === lang);
+				});
+			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+				const saved = localStorage.getItem('lang');
+				const browser = navigator.language.startsWith('fr') ? 'fr' : 'en';
+				setLang(saved || browser);
+
+				document.querySelectorAll('[data-lang-btn]').forEach((b) => {
+					b.addEventListener('click', () => setLang(b.dataset.langBtn));
+				});
+			});
+		</script>
 	</body>
 </html>
 
-<style>
+<style is:global>
 	html,
 	body {
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+
+	/* Affichage selon la langue */
+	html[lang="en"] [data-l="fr"] {
+		display: none !important;
+	}
+	html:not([lang="en"]) [data-l="en"] {
+		display: none !important;
 	}
 </style>

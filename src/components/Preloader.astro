@@ -8,10 +8,12 @@
 const oncePerSession = false;
 ---
 
-<div class="preloader" id="preloader" data-once={String(oncePerSession)} role="status" aria-live="polite" aria-label="Chargement">
+<div class="preloader" id="preloader" data-once={String(oncePerSession)} role="status" aria-live="polite" aria-label="Chargement / Loading">
   <canvas class="pl-canvas" id="plCanvas" aria-hidden="true"></canvas>
   <div class="pl-info">
-    <span class="pl-label">Chargement</span>
+    <span class="pl-label">
+      <span data-l="fr">Chargement</span><span data-l="en">Loading</span>
+    </span>
     <span class="pl-count" id="plCount">0%</span>
   </div>
 </div>

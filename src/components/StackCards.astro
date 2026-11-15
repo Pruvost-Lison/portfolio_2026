@@ -11,7 +11,9 @@ const cards = [
     color: '#ff1f6e',
     number: '01',
     tag: 'Création visuelle, identité graphique, posters, interfaces',
+    tagEn: 'Visual creation, graphic identity, posters, interfaces',
     title: 'DIRECTION\nARTISTIQUE',
+    titleEn: 'ART\nDIRECTION',
     img: directionImg.src,
   },
   {
@@ -19,7 +21,9 @@ const cards = [
     color: '#000',
     number: '02',
     tag: 'Intégration web, animations, interactions, responsive',
+    tagEn: 'Web integration, animations, interactions, responsive design',
     title: 'DÉVELOPPEMENT\nFRONT',
+    titleEn: 'FRONT-END\nDEVELOPMENT',
     img: devImg.src,
   },
   {
@@ -27,7 +31,9 @@ const cards = [
     color: '#b8f000',
     number: '03',
     tag: 'UX/UI, ergonomie, parcours, accessibilité, expérience',
+    tagEn: 'UX/UI, usability, user journeys, accessibility, experience',
     title: 'BRANDING',
+    titleEn: 'BRANDING',
     img: experienceImg.src,
   },
 ];
@@ -46,12 +52,17 @@ const cards = [
       >
         <div class="card-inner">
           <!-- Tag en haut à gauche -->
-          <p class="card-tag" style={`color: ${card.color};`}>{card.tag}</p>
+          <p class="card-tag" style={`color: ${card.color};`}>
+            <span data-l="fr">{card.tag}</span><span data-l="en">{card.tagEn}</span>
+          </p>
 
           <!-- Titre en bas à gauche -->
           <h2 class="card-title" style={`color: ${card.color};`}>
             {card.title.split('\n').map((line) => (
-              <span class="title-line">{line}</span>
+              <span class="title-line" data-l="fr">{line}</span>
+            ))}
+            {card.titleEn.split('\n').map((line) => (
+              <span class="title-line" data-l="en">{line}</span>
             ))}
           </h2>
 
@@ -187,15 +198,15 @@ const cards = [
     }
     .card-image-wrap {
       position: relative;
-      top: auto;    /* annule les top/right hérités de la tablette, */
-      right: auto;  /* sinon l'image est décalée avec position: relative */
+      top: auto;
+      right: auto;
       order: 2;
       flex: 0 1 auto;
       min-height: 0;
-      width: 62%;          /* ← règle la taille ici (ex: 50% plus petit, 75% plus grand) */
+      width: 62%;
       aspect-ratio: 3 / 4;
       max-height: 100%;
-      margin: auto;        /* centrée horizontalement et verticalement dans l'espace libre */
+      margin: auto;
     }
     .card-image {
       position: absolute;
@@ -264,6 +275,7 @@ const cards = [
       const REF = 100;
       title.style.fontSize = `${REF}px`;
       let widest = 0;
+      // Les lignes de la langue cachée ont une largeur de 0, elles sont ignorées
       title.querySelectorAll<HTMLElement>('.title-line').forEach((line) => {
         widest = Math.max(widest, line.offsetWidth);
       });
@@ -285,6 +297,12 @@ const cards = [
   window.addEventListener('orientationchange', refresh);
   // Re-mesure une fois les polices chargées
   document.fonts?.ready.then(refresh);
+
+  // Re-mesure quand la langue change (FR <-> EN)
+  new MutationObserver(refresh).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['lang'],
+  });
 
   fitTitles();
   update();

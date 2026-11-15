@@ -29,7 +29,10 @@ const translateY = [60, 30, 10, 10, 25, 55];
 
   <div class="poster-header">
     <h2 class="poster-title">
-      <span class="script-s">S</span>élection de poster
+      <!-- Français -->
+      <span data-l="fr"><span class="script-s">S</span>élection de poster</span>
+      <!-- English -->
+      <span data-l="en"><span class="script-s">S</span>elected posters</span>
     </h2>
   </div>
 
@@ -52,7 +55,9 @@ const translateY = [60, 30, 10, 10, 25, 55];
   </div>
 
   <div class="poster-cta">
-    <a href="/projets" class="btn-voir-plus">Voir plus</a>
+    <a href="/projets" class="btn-voir-plus">
+      <span data-l="fr">Voir plus</span><span data-l="en">See more</span>
+    </a>
   </div>
 
 </section>
@@ -81,14 +86,14 @@ const translateY = [60, 30, 10, 10, 25, 55];
 
   .script-s {
     font-family: 'Edwardian Script', cursive;
-    font-size: 1.5em; /* = 9rem quand le titre fait 6rem, et suit sur mobile */
+    font-size: 1.5em;
     font-weight: normal;
     line-height: 0.8;
   }
 
   /* === FAN === */
   .poster-fan {
-    --k: 1px; /* unité d'échelle des décalages : 1px desktop */
+    --k: 1px;
     position: relative;
     height: 580px;
     display: flex;
@@ -123,7 +128,6 @@ const translateY = [60, 30, 10, 10, 25, 55];
     transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  /* Overlay sombre sur chaque poster */
   .poster-overlay {
     position: absolute;
     inset: 0;
@@ -134,7 +138,6 @@ const translateY = [60, 30, 10, 10, 25, 55];
     pointer-events: none;
   }
 
-  /* Poster "sélectionné" : au hover (souris) OU au tap (tactile, classe .is-active) */
   .poster-item.is-active {
     transform: translateX(calc(var(--tx) * var(--k)))
                translateY(calc(-60 * var(--k)))
@@ -151,7 +154,6 @@ const translateY = [60, 30, 10, 10, 25, 55];
     transform: scale(1.04);
   }
 
-  /* Hover uniquement sur appareils avec souris (évite l'état "collé" au tap) */
   @media (hover: hover) {
     .poster-item:hover {
       transform: translateX(calc(var(--tx) * var(--k)))
@@ -210,8 +212,6 @@ const translateY = [60, 30, 10, 10, 25, 55];
     }
 
     .poster-fan {
-      /* Décalages proportionnels à la largeur d'écran :
-         l'éventail garde la même forme sur tous les téléphones */
       --k: 0.1vw;
       height: 62vw;
       margin-bottom: 2rem;

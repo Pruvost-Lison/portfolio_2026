@@ -1,5 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+// Titre avec lettres script : version anglaise "Contact Me"
+const script = `font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem;`;
+const sans = `font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem;`;
+const titreEn =
+  `<span style="${script}">C</span><span style="${sans}">ontact </span>` +
+  `<span style="${script}">M</span><span style="${sans}">e</span>`;
 ---
 
 <Layout title="Me Contacter">
@@ -7,7 +14,11 @@ import Layout from '../layouts/Layout.astro';
     <div style="max-width: 700px; margin: 0 auto; padding: 3rem 2rem 4rem;">
 
       <!-- TITRE -->
-      <h1 style="line-height: 1.1; margin-bottom: 3rem; color: #131313; font-weight: normal; text-align: center;">
+      <h1
+        style="line-height: 1.1; margin-bottom: 3rem; color: #131313; font-weight: normal; text-align: center;"
+        data-fr
+        data-en={titreEn}
+      >
         <span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem;">M</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem;">e </span><span style="font-family: 'Edwardian Script', cursive; font-weight: normal; font-size: 6rem;">C</span><span style="font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 4rem;">ontacter</span>
       </h1>
 
@@ -39,7 +50,11 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- Nom + Prénom -->
         <div style="margin-bottom: 1.5rem;">
-          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.75rem;">
+          <label
+            style="display: block; font-size: 0.85rem; margin-bottom: 0.75rem;"
+            data-fr
+            data-en={`Last name <span style="opacity: 0.5;">(required)</span>`}
+          >
             Nom <span style="opacity: 0.5;">(requis)</span>
           </label>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
@@ -47,6 +62,8 @@ import Layout from '../layouts/Layout.astro';
               type="text"
               name="nom"
               placeholder="Nom"
+              data-ph-fr="Nom"
+              data-ph-en="Last name"
               required
               style="width: 100%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
             />
@@ -54,6 +71,8 @@ import Layout from '../layouts/Layout.astro';
               type="text"
               name="prenom"
               placeholder="Prénom"
+              data-ph-fr="Prénom"
+              data-ph-en="First name"
               style="width: 100%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313;"
             />
           </div>
@@ -61,7 +80,11 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- Email -->
         <div style="margin-bottom: 1.25rem;">
-          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;">
+          <label
+            style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;"
+            data-fr
+            data-en={`Email <span style="opacity: 0.5;">(required)</span>`}
+          >
             Email <span style="opacity: 0.5;">(requis)</span>
           </label>
           <input
@@ -80,27 +103,36 @@ import Layout from '../layouts/Layout.astro';
             name="newsletter"
             style="accent-color: #131313; width: 14px; height: 14px; cursor: pointer;"
           />
-          <label for="newsletter" style="font-size: 0.75rem; color: #131313; opacity: 0.6; cursor: pointer;">
+          <label
+            for="newsletter"
+            style="font-size: 0.75rem; color: #131313; opacity: 0.6; cursor: pointer;"
+            data-fr
+            data-en="Sign up to receive news and updates"
+          >
             Inscrivez-vous pour recevoir les actualités et les mises à jour
           </label>
         </div>
 
         <!-- Message -->
-<div style="margin-bottom: 1rem;">
-  <label for="message" style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;">
-    Message
-  </label>
-  <textarea
-    id="message"
-    name="message"
-    rows="1"
-    style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313; resize: none; overflow: hidden; display: block; line-height: 1.4;"
-  ></textarea>
-</div>
+        <div style="margin-bottom: 1rem;">
+          <label for="message" style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem;" data-fr data-en="Message">
+            Message
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows="1"
+            style="width: 55%; border: none; border-bottom: 1px solid #131313; padding: 0.4rem 0; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; outline: none; background: transparent; color: #131313; resize: none; overflow: hidden; display: block; line-height: 1.4;"
+          ></textarea>
+        </div>
 
         <!-- Téléphone -->
         <div style="margin-bottom: 2rem;">
-          <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem; margin-top: 1rem;">
+          <label
+            style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem; margin-top: 1rem;"
+            data-fr
+            data-en="Phone"
+          >
             Téléphone
           </label>
           <input
@@ -115,9 +147,9 @@ import Layout from '../layouts/Layout.astro';
         <button
           type="submit"
           style="background-color: #131313; color: #9bff00; padding: 0.65rem 1.75rem; border-radius: 9999px; border: none; font-size: 0.9rem; font-family: Helvetica, Arial, sans-serif; cursor: pointer; font-weight: 500;"
-        >
-          Envoyer
-        </button>
+          data-fr
+          data-en="Send"
+        >Envoyer</button>
 
       </form>
 
@@ -142,10 +174,27 @@ import Layout from '../layouts/Layout.astro';
     const feedbackMessage = document.getElementById('feedback-message');
     const submitBtn = form.querySelector('button[type="submit"]');
     const messageField = document.getElementById('message');
-messageField.addEventListener('input', () => {
-  messageField.style.height = 'auto';
-  messageField.style.height = messageField.scrollHeight + 'px';
-});
+
+    messageField.addEventListener('input', () => {
+      messageField.style.height = 'auto';
+      messageField.style.height = messageField.scrollHeight + 'px';
+    });
+
+    // ── Langue ──
+    const isEn = () => document.documentElement.lang === 'en';
+    const t = (fr, en) => (isEn() ? en : fr);
+
+    // Les placeholders ne sont pas des textes : on les met à jour à part
+    function applyPlaceholders() {
+      document.querySelectorAll('[data-ph-fr]').forEach((el) => {
+        el.placeholder = isEn() ? el.dataset.phEn : el.dataset.phFr;
+      });
+    }
+    applyPlaceholders();
+    new MutationObserver(applyPlaceholders).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['lang'],
+    });
 
     function showFeedback(text, bg, color) {
       feedbackMessage.style.display = 'block';
@@ -161,13 +210,17 @@ messageField.addEventListener('input', () => {
 
       // Validation
       if (!formData.get('nom') || !formData.get('email')) {
-        showFeedback('Merci de remplir les champs requis (Nom et Email).', '#fb0373', '#fff');
+        showFeedback(
+          t('Merci de remplir les champs requis (Nom et Email).', 'Please fill in the required fields (Last name and Email).'),
+          '#fb0373',
+          '#fff'
+        );
         return;
       }
 
       // Désactiver le bouton pendant l'envoi
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Envoi en cours...';
+      submitBtn.textContent = t('Envoi en cours...', 'Sending...');
 
       try {
         const body = new URLSearchParams(formData).toString();
@@ -185,7 +238,14 @@ messageField.addEventListener('input', () => {
         if (!res.ok) throw new Error('Erreur ' + res.status);
 
         // Succès
-        showFeedback('✓ Votre message a bien été envoyé ! Je vous recontacte rapidement.', '#9bff00', '#131313');
+        showFeedback(
+          t(
+            '✓ Votre message a bien été envoyé ! Je vous recontacte rapidement.',
+            '✓ Your message has been sent! I will get back to you shortly.'
+          ),
+          '#9bff00',
+          '#131313'
+        );
         form.reset();
 
         messageField.style.height = 'auto';
@@ -197,10 +257,14 @@ messageField.addEventListener('input', () => {
 
       } catch (err) {
         console.error(err);
-        showFeedback('Une erreur est survenue. Veuillez réessayer.', '#fb0373', '#fff');
+        showFeedback(
+          t('Une erreur est survenue. Veuillez réessayer.', 'An error occurred. Please try again.'),
+          '#fb0373',
+          '#fff'
+        );
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Envoyer';
+        submitBtn.textContent = t('Envoyer', 'Send');
       }
     });
   </script>

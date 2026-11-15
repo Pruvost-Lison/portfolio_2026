@@ -11,12 +11,12 @@
         <h2 class="title-script-green mb-8">jellis©</h2>
         
         <div class="mb-8">
-          <h3 class="text-xl font-bold mb-4">Projets</h3>
+          <h3 class="text-xl font-bold mb-4"><span data-l="fr">Projets</span><span data-l="en">Projects</span></h3>
           <ul class="space-y-2 text-base">
-            <li><a href="/projets?filtre=Design%20graphique" class="hover:text-green transition">Design graphique</a></li>
-            <li><a href="/projets?filtre=D%C3%A9veloppement%20web" class="hover:text-green transition">Développement web</a></li>
+            <li><a href="/projets?filtre=Design%20graphique" class="hover:text-green transition"><span data-l="fr">Design graphique</span><span data-l="en">Graphic design</span></a></li>
+            <li><a href="/projets?filtre=D%C3%A9veloppement%20web" class="hover:text-green transition"><span data-l="fr">Développement web</span><span data-l="en">Web development</span></a></li>
             <li><a href="/projets?filtre=Motion%20design" class="hover:text-green transition">Motion design</a></li>
-            <li><a href="/projets?filtre=Audiovisuel" class="hover:text-green transition">Audiovisuel</a></li>
+            <li><a href="/projets?filtre=Audiovisuel" class="hover:text-green transition"><span data-l="fr">Audiovisuel</span><span data-l="en">Audiovisual</span></a></li>
           </ul>
         </div>
         
@@ -27,11 +27,11 @@
       
       <!-- Colonne droite -->
       <div class="text-left md:text-right">
-        <h3 class="text-xl font-bold mb-4">Contact & infos</h3>
+        <h3 class="text-xl font-bold mb-4"><span data-l="fr">Contact & infos</span><span data-l="en">Contact & info</span></h3>
         <ul class="space-y-2 text-base mb-8">
           <li><a href="/contact" class="hover:text-pink transition">Contact</a></li>
-          <li><a href="/a-propos" class="hover:text-pink transition">À propos</a></li>
-          <li><a href="/mentions-legales" class="hover:text-pink transition">Mentions légales</a></li>
+          <li><a href="/a-propos" class="hover:text-pink transition"><span data-l="fr">À propos</span><span data-l="en">About</span></a></li>
+          <li><a href="/mentions-legales" class="hover:text-pink transition"><span data-l="fr">Mentions légales</span><span data-l="en">Legal notice</span></a></li>
         </ul>
         
         <a href="tel:+33768157774" class="text-2xl font-bold hover:text-pink transition">
@@ -44,10 +44,18 @@
     <div class="border-t border-white-pure/20 pt-6">
       <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
         <p class="text-white-pure/70 text-center md:text-left">
-          © 2026 — Lison Pruvost • Code source disponible sur GitHub • Tous droits réservés.
+          <span data-l="fr">© 2026 — Lison Pruvost • Code source disponible sur GitHub • Tous droits réservés.</span>
+          <span data-l="en">© 2026 — Lison Pruvost • Source code available on GitHub • All rights reserved.</span>
         </p>
         
-        <div class="flex gap-4">
+        <div class="flex gap-4 items-center">
+          <!-- Boutons de langue (à supprimer si ton Header en a déjà) -->
+          <div class="flex gap-2 font-bold uppercase">
+            <button type="button" data-lang-btn="fr" class="hover:text-green transition [&.active]:text-green">FR</button>
+            <span class="text-white-pure/40">/</span>
+            <button type="button" data-lang-btn="en" class="hover:text-green transition [&.active]:text-green">EN</button>
+          </div>
+
           <a href="#" aria-label="Email" class="hover:text-green transition">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>

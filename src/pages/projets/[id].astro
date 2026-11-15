@@ -20,6 +20,10 @@ const autres = projet.similaires
   .map((slug) => getProjet(slug))
   .filter((p): p is Projet => Boolean(p))
   .slice(0, 3);
+
+// Titre avec grande lettre script : on prépare le HTML français et anglais
+const titreHtml = (t: string) =>
+  `<span class="script-letter">${t.charAt(0)}</span><span class="title-rest">${t.slice(1)}</span>`;
 ---
 
 <Layout title={`${projet.titre} — Lison Pruvost`}>
@@ -30,27 +34,29 @@ const autres = projet.similaires
 
   <!-- ══════════ HERO ══════════ -->
   <section class="projet-hero">
-    <a href="/projets" class="btn-retour">← Projets</a>
+    <a href="/projets" class="btn-retour" data-fr data-en="← Projects">← Projets</a>
     <div class="projet-hero-inner">
 
       <!-- Colonne gauche : infos -->
       <div class="projet-hero-left">
-        <h1 class="projet-title reveal">
+        <h1 class="projet-title reveal" data-fr data-en={titreHtml(projet.en.titre)}>
           <span class="script-letter">{projet.titre.charAt(0)}</span><span class="title-rest">{projet.titre.slice(1)}</span>
         </h1>
 
-        <p class="projet-extrait reveal">{projet.extrait}</p>
+        <p class="projet-extrait reveal" data-fr data-en={projet.en.extrait}>{projet.extrait}</p>
 
         <div class="competences-wrap reveal">
-          {projet.competences.map((comp) => (
-            <span class="competence-tag">{comp}</span>
+          {projet.competences.map((comp, i) => (
+            <span class="competence-tag" data-fr data-en={projet.en.competences[i]}>{comp}</span>
           ))}
         </div>
 
         <hr class="projet-divider" />
 
         <div class="projet-explication reveal">
-          {projet.explication.map((para) => <p>{para}</p>)}
+          {projet.explication.map((para, i) => (
+            <p data-fr data-en={projet.en.explication[i]}>{para}</p>
+          ))}
         </div>
 
         {projet.embed && (
@@ -67,7 +73,7 @@ const autres = projet.similaires
         )}
 
         {projet.voirSite && (
-          <a href={projet.voirSite} target="_blank" rel="noopener" class="btn-voir-site reveal">
+          <a href={projet.voirSite} target="_blank" rel="noopener" class="btn-voir-site reveal" data-fr data-en="View the project →">
             Voir le projet →
           </a>
         )}
@@ -106,25 +112,25 @@ const autres = projet.similaires
   <!-- ══════════ OBJECTIFS ══════════ -->
   <section class="projet-objectifs">
     <div class="objectifs-inner">
-      <h2 class="objectifs-title reveal">Objectifs du projet</h2>
+      <h2 class="objectifs-title reveal" data-fr data-en="Project objectives">Objectifs du projet</h2>
       <div class="objectifs-content reveal">
-        {projet.objectifs.map((line) => (
+        {projet.objectifs.map((line, i) => (
           <div class="objectif-line">
             <span class="objectif-bullet">—</span>
-            <p>{line}</p>
+            <p data-fr data-en={projet.en.objectifs[i]}>{line}</p>
           </div>
         ))}
       </div>
 
       <div class="resultat-wrap reveal">
-        <h2 class="objectifs-title" style="margin-top: 3rem;">Résultat</h2>
-        <p class="resultat-text">{projet.resultat}</p>
+        <h2 class="objectifs-title" style="margin-top: 3rem;" data-fr data-en="Result">Résultat</h2>
+        <p class="resultat-text" data-fr data-en={projet.en.resultat}>{projet.resultat}</p>
       </div>
 
       {projet.rapportIa && (
         <div class="resultat-wrap reveal">
-          <h2 class="objectifs-title" style="margin-top: 3rem;">Rapport IA</h2>
-          <p class="resultat-text">{projet.rapportIa}</p>
+          <h2 class="objectifs-title" style="margin-top: 3rem;" data-fr data-en="AI report">Rapport IA</h2>
+          <p class="resultat-text" data-fr data-en={projet.en.rapportIa}>{projet.rapportIa}</p>
         </div>
       )}
     </div>
@@ -133,11 +139,17 @@ const autres = projet.similaires
   <!-- ══════════ VOIR D'AUTRES PROJETS ══════════ -->
   <section class="autres-projets">
     <div class="autres-inner">
-      <h2 class="autres-title reveal">
+      <h2
+        class="autres-title reveal"
+        data-fr
+        data-en={`<span class="script-v">S</span>ee other projects`}
+      >
         <span class="script-v">V</span>oir d'autres projets
       </h2>
       <div class="autres-grid">
-        {autres.length === 0 && <p class="autres-placeholder">Aucun projet similaire.</p>}
+        {autres.length === 0 && (
+          <p class="autres-placeholder" data-fr data-en="No similar projects.">Aucun projet similaire.</p>
+        )}
         {autres.map((p) => (
           <a href={`/projets/${p.slug}`} class="autre-card reveal">
             <Image
@@ -150,11 +162,13 @@ const autres = projet.similaires
             <div class="autre-card-overlay"></div>
             <div class="autre-card-label">
               <div class="autre-card-top">
-                <span class="autre-card-name">{p.nom}</span>
-                <span class="autre-card-btn">Voir plus</span>
+                <span class="autre-card-name" data-fr data-en={p.en.nom}>{p.nom}</span>
+                <span class="autre-card-btn" data-fr data-en="See more">Voir plus</span>
               </div>
               <div class="autre-card-comps">
-                {p.competencesCarte.map((c) => <span class="autre-card-comp">{c}</span>)}
+                {p.competencesCarte.map((c, j) => (
+                  <span class="autre-card-comp" data-fr data-en={p.en.competencesCarte[j]}>{c}</span>
+                ))}
               </div>
             </div>
           </a>

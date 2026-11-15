@@ -7,10 +7,10 @@ import moduloImg from '../assets/modulo_hover.png';
 import photoImg from '../assets/photographie_hover.png';
 
 const projects = [
-  { number: "01", label: "Design graphique",  href: "/projets?filtre=Design%20graphique",       img: oceanImg.src },
-  { number: "02", label: "Développement web", href: "/projets?filtre=D%C3%A9veloppement%20web", img: yumlyImg.src },
-  { number: "03", label: "Motion design",     href: "/projets?filtre=Motion%20design",           img: moduloImg.src },
-  { number: "04", label: "Audiovisuel",       href: "/projets?filtre=Photographie",              img: photoImg.src },
+  { number: "01", label: "Design graphique",  labelEn: "Graphic design",   href: "/projets?filtre=Design%20graphique",       img: oceanImg.src },
+  { number: "02", label: "Développement web", labelEn: "Web development",  href: "/projets?filtre=D%C3%A9veloppement%20web", img: yumlyImg.src },
+  { number: "03", label: "Motion design",     labelEn: "Motion design",    href: "/projets?filtre=Motion%20design",           img: moduloImg.src },
+  { number: "04", label: "Audiovisuel",       labelEn: "Audiovisual",      href: "/projets?filtre=Photographie",              img: photoImg.src },
 ];
 ---
 
@@ -18,7 +18,10 @@ const projects = [
 
   <div class="index-projet-title">
     <h2>
-      <span class="title-script">M</span><span class="title-script-rest">es </span><span class="title-capital">P</span><span class="title-sans">rojets</span>
+      <!-- Français -->
+      <span data-l="fr"><span class="title-script">M</span><span class="title-script-rest">es </span><span class="title-capital">P</span><span class="title-sans">rojets</span></span>
+      <!-- English -->
+      <span data-l="en"><span class="title-script">M</span><span class="title-script-rest">y </span><span class="title-capital">P</span><span class="title-sans">rojects</span></span>
     </h2>
   </div>
 
@@ -26,7 +29,9 @@ const projects = [
     {projects.map((p) => (
       <a href={p.href} class="project-item" data-img={p.img}>
         <span class="project-number">[{p.number}]</span>
-        <span class="project-label">{p.label}</span>
+        <span class="project-label">
+          <span data-l="fr">{p.label}</span><span data-l="en">{p.labelEn}</span>
+        </span>
         <span class="project-arrow">→</span>
       </a>
     ))}
@@ -147,7 +152,6 @@ const projects = [
     border-radius: 6px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    /* transition uniquement sur opacity */
     transition: opacity 0.2s ease;
     top: 0;
     left: 0;
@@ -196,7 +200,6 @@ const projects = [
     if (isVisible) {
       curX = lerp(curX, mouseX, 0.12);
       curY = lerp(curY, mouseY, 0.12);
-      // On centre l'image sur le curseur et on la décale légèrement en haut à droite
       hoverContainer.style.transform = `translate(${curX - W / 2 + 40}px, ${curY - H / 2 - 30}px)`;
     }
     requestAnimationFrame(tick);
@@ -215,7 +218,6 @@ const projects = [
     item.addEventListener('mouseenter', () => {
       if (!imgSrc) return;
       hoverImg.src = imgSrc;
-      // Téléporte immédiatement à la position courante avant d'afficher
       curX = mouseX;
       curY = mouseY;
       hoverContainer.style.transform = `translate(${curX - W / 2 + 40}px, ${curY - H / 2 - 30}px)`;

@@ -11,61 +11,108 @@ const cvHref = cvUrl;
 
 // Les mots entre *étoiles* sont surlignés en vert pendant l'animation.
 const headline = `J'imagine des univers *visuels*, je compose des *images*, je donne *forme* aux idées.`;
-const words = headline.split(' ').map((w) => {
-  const [, star, t, punct] = w.match(/^(\*?)(.+?)\*?([.,;:!?]?)$/)!;
-  return { t, punct, hl: !!star };
-});
+const headlineEn = `I imagine *visual* worlds, I compose *images*, I give *shape* to ideas.`;
+
+const toWords = (h: string) =>
+  h.split(' ').map((w) => {
+    const [, star, t, punct] = w.match(/^(\*?)(.+?)\*?([.,;:!?]?)$/)!;
+    return { t, punct, hl: !!star };
+  });
+
+const words = toWords(headline);
+
+// Même structure HTML que celle générée par le template, pour la version anglaise
+const wordsHtml = (h: string) =>
+  toWords(h)
+    .map(
+      (w, i) =>
+        `<span class="w" aria-hidden="true"><span style="--i:${i}"><span${w.hl ? ' class="hl"' : ''}>${w.t}</span>${w.punct}</span></span>`
+    )
+    .join(' ');
 
 const skills = [
   {
     title: 'Points forts',
+    titleEn: 'Strengths',
     items: [
-      'Créative et sensible au détail',
-      'Bonne compréhension des besoins utilisateurs',
-      'Curieuse et polyvalente',
-      'Esprit analytique',
-      'Capacité à apprendre et à évoluer rapidement',
+      { fr: 'Créative et sensible au détail', en: 'Creative and detail-oriented' },
+      { fr: 'Bonne compréhension des besoins utilisateurs', en: 'Good understanding of user needs' },
+      { fr: 'Curieuse et polyvalente', en: 'Curious and versatile' },
+      { fr: 'Esprit analytique', en: 'Analytical mind' },
+      { fr: 'Capacité à apprendre et à évoluer rapidement', en: 'Ability to learn and adapt quickly' },
     ],
   },
   {
     title: 'Compétences',
+    titleEn: 'Skills',
     items: [
-      'UI / UX design',
-      'Front-end (HTML, CSS, bases JavaScript)',
-      'Design graphique',
-      'Montage vidéo',
-      'Identité visuelle',
-      'Prototypage et wireframes',
+      { fr: 'UI / UX design', en: 'UI / UX design' },
+      { fr: 'Front-end (HTML, CSS, bases JavaScript)', en: 'Front-end (HTML, CSS, JavaScript basics)' },
+      { fr: 'Design graphique', en: 'Graphic design' },
+      { fr: 'Montage vidéo', en: 'Video editing' },
+      { fr: 'Identité visuelle', en: 'Visual identity' },
+      { fr: 'Prototypage et wireframes', en: 'Prototyping and wireframes' },
     ],
   },
   {
     title: 'Outils',
+    titleEn: 'Tools',
     items: [
-      'Figma',
-      'Suite Adobe (Photoshop, Illustrator, InDesign, Premiere Pro, After Effects, Audition)',
-      'VS Code (CSS, HTML, JS, Astro, Tailwind)',
-      'Suite Google / Office',
-      'Notion',
-      'DaVinci Resolve / CapCut',
+      { fr: 'Figma', en: 'Figma' },
+      {
+        fr: 'Suite Adobe (Photoshop, Illustrator, InDesign, Premiere Pro, After Effects, Audition)',
+        en: 'Adobe Suite (Photoshop, Illustrator, InDesign, Premiere Pro, After Effects, Audition)',
+      },
+      { fr: 'VS Code (CSS, HTML, JS, Astro, Tailwind)', en: 'VS Code (CSS, HTML, JS, Astro, Tailwind)' },
+      { fr: 'Suite Google / Office', en: 'Google / Office suite' },
+      { fr: 'Notion', en: 'Notion' },
+      { fr: 'DaVinci Resolve / CapCut', en: 'DaVinci Resolve / CapCut' },
     ],
   },
 ];
 
 const timeline = [
-  { year: '2023', title: 'Bac général', desc: 'Obtention du Baccalauréat mention européenne DNL' },
-  { year: '2023 →', title: 'BUT MMI — IUT de Montbéliard', desc: 'Parcours Création Numérique. Design, développement web, audiovisuel.' },
   {
-    year: 'S3 — 2024',
+    year: '2024',
+    yearEn: '2024',
+    title: 'Bac général',
+    titleEn: 'General high school diploma',
+    desc: 'Obtention du Baccalauréat mention européenne DNL',
+    descEn: 'Baccalauréat with European section (DNL) distinction',
+  },
+  {
+    year: '2024 →',
+    yearEn: '2024 →',
+    title: 'BUT MMI — IUT de Montbéliard',
+    titleEn: 'BUT MMI — IUT de Montbéliard',
+    desc: 'Parcours Création Numérique. Design, développement web, audiovisuel.',
+    descEn: 'Digital Creation track. Design, web development, audiovisual.',
+  },
+  {
+    year: 'S3 — 2025',
+    yearEn: 'S3 — 2025',
     title: `Semestre à l'étranger : Vanier College, Montréal`,
+    titleEn: 'Semester abroad: Vanier College, Montreal',
     desc: `Intégration dans un cégep anglophone en « Multimedia Integration ». Renforcement en design et création numérique.`,
+    descEn: `Joined an English-language cégep in “Multimedia Integration”. Strengthened my skills in design and digital creation.`,
     hl: true,
   },
   {
     year: '30 mars → 5 juin 2026',
+    yearEn: 'March 30 → June 5, 2026',
     title: 'Stage — Communauté de Communes du Sundgau',
+    titleEn: 'Internship — Communauté de Communes du Sundgau',
     desc: 'Service communication : affiches, brochures, vidéos et animations.',
+    descEn: 'Communication department: posters, brochures, videos and animations.',
   },
-  { year: '2026', title: `En cours d'obtention du BUT MMI`, desc: 'En cours — diplôme prévu en juin 2027.' },
+  {
+    year: '2026',
+    yearEn: '2026',
+    title: `En cours d'obtention du BUT MMI`,
+    titleEn: 'BUT MMI in progress',
+    desc: 'En cours — diplôme prévu en juin 2027.',
+    descEn: 'In progress — degree expected in June 2027.',
+  },
 ];
 ---
 
@@ -77,7 +124,11 @@ const timeline = [
 
     <!-- HERO -->
     <section class="sec about-hero dark">
-      <h1 class="hero-title">
+      <h1
+        class="hero-title"
+        data-fr
+        data-en={`<span class="script">A</span><span class="sans">bout</span>`}
+      >
         <span class="script">À P</span><span class="sans">ropos</span>
       </h1>
       <div class="hero-img parallax-img">
@@ -88,14 +139,24 @@ const timeline = [
     <!-- INTRO + CV -->
     <section class="sec light">
       <div class="intro-inner">
-        <h2 class="intro-title words" aria-label={words.map((w) => w.t).join(' ')}>
+        <h2
+          class="intro-title words"
+          aria-label={words.map((w) => w.t).join(' ')}
+          data-fr
+          data-en={wordsHtml(headlineEn)}
+        >
           {words.map((w, i) => (
             <span class="w" aria-hidden="true">
               <span style={`--i:${i}`}><span class:list={{ hl: w.hl }}>{w.t}</span>{w.punct}</span>
             </span>
           ))}
         </h2>
-        <p class="intro-sub reveal" style="--d:.5s">
+        <p
+          class="intro-sub reveal"
+          style="--d:.5s"
+          data-fr
+          data-en="BUT MMI student in Montbéliard, I move between graphic design, art direction and audiovisual. I love experimenting, working across different fields and giving shape to ideas."
+        >
           Étudiante en BUT MMI à Montbéliard, je navigue entre design graphique, direction artistique et audiovisuel.
           J'aime expérimenter, toucher à différents domaines et donner forme à des idées.
         </p>
@@ -114,8 +175,12 @@ const timeline = [
         <div class="skills-content">
           {skills.map((s, i) => (
             <div class="reveal" style={`--d:${i * 0.15}s`}>
-              <h3>{s.title}</h3>
-              <ul class="skill-list">{s.items.map((it) => <li>{it}</li>)}</ul>
+              <h3 data-fr data-en={s.titleEn}>{s.title}</h3>
+              <ul class="skill-list">
+                {s.items.map((it) => (
+                  <li data-fr data-en={it.en}>{it.fr}</li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>
@@ -124,20 +189,32 @@ const timeline = [
 
     <!-- PARCOURS -->
     <section class="sec light">
-      <h2 class="sec-in timeline-title reveal">Parcours &amp; apprentissages</h2>
+      <h2 class="sec-in timeline-title reveal" data-fr data-en="Background &amp; learning">Parcours &amp; apprentissages</h2>
 
       <div class="sec-in timeline-body">
         <div class="timeline-text reveal">
-          <p>
+          <p
+            data-fr
+            data-en="Currently in the 3rd year of the BUT Métiers du Multimédia et de l’Internet in Montbéliard, I am developing a versatile approach to visual creation, between graphic design, art direction and audiovisual."
+          >
             Actuellement en 3ᵉ année de BUT Métiers du Multimédia et de l’Internet à Montbéliard, je développe une approche polyvalente de la création visuelle, entre design graphique, direction artistique et audiovisuel.
           </p>
-          <p>
+          <p
+            data-fr
+            data-en="As part of my studies, I spent a semester at <strong>Vanier College</strong>, an English-language cégep in Montreal. This experience let me discover a new cultural environment and enrich my design and creative practice."
+          >
             Dans le cadre de mon parcours, j’ai réalisé un semestre d’études au <strong>Vanier College</strong>, un cégep anglophone situé à Montréal. Cette expérience m’a permis de découvrir un nouvel environnement culturel et d’enrichir ma pratique du design et de la création.
           </p>
-          <p>
+          <p
+            data-fr
+            data-en="I also did an internship in the communication department of the <strong>Communauté de Communes du Sundgau (CCS)</strong>, where I took part in creating various visual materials: posters, brochures, videos and animations. An experience that let me put my skills into practice and better understand the challenges of visual communication in a professional setting."
+          >
             J’ai également effectué un stage au sein du service communication de la <strong>Communauté de Communes du Sundgau (CCS)</strong>, où j’ai participé à la réalisation de différents supports visuels : affiches, brochures, vidéos et animations. Une expérience qui m’a permis de mettre en pratique mes compétences et de mieux comprendre les enjeux de la communication visuelle en milieu professionnel.
           </p>
-          <p>
+          <p
+            data-fr
+            data-en="Curious and versatile, I like to explore different fields, experiment with new approaches and build varied visual worlds. I am particularly interested in graphic design, image and video, with the desire to keep developing my creativity through diverse projects."
+          >
             Curieuse et polyvalente, j’aime explorer différents domaines, expérimenter de nouvelles approches et construire des univers visuels variés. Je m’intéresse particulièrement au design graphique, à l’image et à la vidéo, avec l’envie de continuer à développer ma créativité à travers des projets divers.
           </p>
         </div>
@@ -147,9 +224,9 @@ const timeline = [
             <div class="tl-item reveal" style={`--d:${i * 0.1}s`}>
               <i class:list={['tl-dot', { 'tl-dot-green': e.hl }]}></i>
               <div>
-                <span class="tl-year">{e.year}</span>
-                <h4>{e.title}</h4>
-                <p>{e.desc}</p>
+                <span class="tl-year" data-fr data-en={e.yearEn}>{e.year}</span>
+                <h4 data-fr data-en={e.titleEn}>{e.title}</h4>
+                <p data-fr data-en={e.descEn}>{e.desc}</p>
               </div>
             </div>
           ))}
@@ -159,11 +236,11 @@ const timeline = [
 
     <!-- CTA -->
     <section class="sec about-cta dark">
-      <p class="cta-label reveal">Envie de collaborer ?</p>
-      <h2 class="cta-big script reveal" style="--d:.1s">Me Contacter</h2>
+      <p class="cta-label reveal" data-fr data-en="Want to collaborate?">Envie de collaborer ?</p>
+      <h2 class="cta-big script reveal" style="--d:.1s" data-fr data-en="Contact Me">Me Contacter</h2>
       <div class="cta-actions reveal" style="--d:.2s">
-        <a href="/contact" class="btn btn-main">Me contacter</a>
-        <a href={cvHref} download={cvFilename} class="btn btn-ghost">Télécharger le CV</a>
+        <a href="/contact" class="btn btn-main" data-fr data-en="Contact me">Me contacter</a>
+        <a href={cvHref} download={cvFilename} class="btn btn-ghost" data-fr data-en="Download CV">Télécharger le CV</a>
       </div>
     </section>
 
@@ -193,7 +270,7 @@ const timeline = [
   .custom-cursor.hovering { width: 60px; height: 60px; background: rgba(155, 255, 0, 0.1); }
 </style>
 
-<style>
+<style is:global>
   .about { --g: var(--color-green, #9bff00); font-family: Helvetica, Arial, sans-serif; }
   .dark { background: #000; color: #fff; }
   .light { background: #f5f5f0; color: #000; }
