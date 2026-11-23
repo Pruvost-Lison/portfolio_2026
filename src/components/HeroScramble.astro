@@ -41,6 +41,30 @@ import introVideo from '../assets/intro.mp4';
           </video>
         </div>
       </div>
+
+      <!-- Bouton son -->
+      <button
+        type="button"
+        id="sound-btn"
+        class="sound-btn"
+        aria-pressed="false"
+        aria-label="Activer le son / Turn sound on"
+      >
+        <!-- Icône son coupé -->
+        <svg class="icon-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+          <path d="M16 9l6 6M22 9l-6 6"></path>
+        </svg>
+        <!-- Icône son activé -->
+        <svg class="icon-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+          <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+          <path d="M19 5a10 10 0 0 1 0 14"></path>
+        </svg>
+        <span class="sound-label">
+          <span data-l="fr">Son</span><span data-l="en">Sound</span>
+        </span>
+      </button>
     </div>
   </div>
 </section>
@@ -106,6 +130,38 @@ import introVideo from '../assets/intro.mp4';
     max-height: none;
   }
 
+  /* ---------- BOUTON SON ---------- */
+  .sound-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    border-radius: 9999px;
+    border: 2px solid var(--color-green, #9bff00);
+    background: #131313;
+    color: var(--color-green, #9bff00);
+    font-family: var(--font-family-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(155, 255, 0, 0.25);
+    transition: box-shadow 0.2s, background-color 0.2s;
+  }
+
+  .sound-btn:hover {
+    background-color: #1d1d1d;
+    box-shadow: 0 0 20px rgba(155, 255, 0, 0.5);
+  }
+
+  .sound-btn .icon-on { display: none; }
+  .sound-btn.is-on .icon-on { display: block; }
+  .sound-btn.is-on .icon-off { display: none; }
+
   /* ---------- MOBILE ---------- */
   @media (max-width: 767px) {
     .hero-inner {
@@ -136,6 +192,13 @@ import introVideo from '../assets/intro.mp4';
       color: #131313;
       opacity: 0.7;
       z-index: 10;
+    }
+
+    /* Au-dessus de la ligne "Scroll" */
+    .sound-btn {
+      right: 14px;
+      bottom: calc(5svh + 2.4rem);
+      padding: 0.5rem 0.9rem;
     }
   }
 </style>
@@ -195,6 +258,23 @@ import introVideo from '../assets/intro.mp4';
   const heroText = document.querySelector(".hero-text-container") as HTMLElement;
   const whiteBg = document.querySelector(".white-bg") as HTMLElement;
   const scrollHint = document.querySelector(".scroll-hint") as HTMLElement | null;
+  const soundBtn = document.getElementById("sound-btn") as HTMLButtonElement | null;
+
+  /* ---------- SON ---------- */
+  function setSound(on: boolean) {
+    if (!video || !soundBtn) return;
+    video.muted = !on;
+    if (on) {
+      video.volume = 1;
+      video.play().catch(() => {});
+    }
+    soundBtn.classList.toggle("is-on", on);
+    soundBtn.setAttribute("aria-pressed", String(on));
+  }
+
+  if (soundBtn && video) {
+    soundBtn.addEventListener("click", () => setSound(video.muted));
+  }
 
   let ticking = false;
 
@@ -315,6 +395,18 @@ import introVideo from '../assets/intro.mp4';
 
     if (scrollHint) {
       scrollHint.style.opacity = `${Math.max(0, 0.7 - expansionPercent * 1.5)}`;
+    }
+
+    // Bouton son : disparaît avec la vidéo, et le son se coupe à ce moment-là
+    if (soundBtn) {
+      const btnOpacity = 1 - disappearPercent;
+      soundBtn.style.opacity = `${btnOpacity}`;
+      soundBtn.style.pointerEvents = btnOpacity < 0.1 ? 'none' : 'auto';
+      soundBtn.style.display = scrollY >= sectionBottom ? 'none' : 'inline-flex';
+
+      if (disappearPercent > 0.3 && !video.muted) {
+        setSound(false);
+      }
     }
 
     ticking = false;
